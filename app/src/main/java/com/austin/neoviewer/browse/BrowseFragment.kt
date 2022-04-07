@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.austin.neoviewer.databinding.FragBrowseBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BrowseFragment: Fragment() {
 
     private val viewModel: BrowseViewModel by viewModels()

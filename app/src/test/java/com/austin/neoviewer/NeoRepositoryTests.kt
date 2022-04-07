@@ -3,7 +3,11 @@ package com.austin.neoviewer
 import com.austin.neoviewer.database.FakeNeoDao
 import com.austin.neoviewer.database.Neo
 import com.austin.neoviewer.network.*
+import com.austin.neoviewer.repository.BrowseResult
+import com.austin.neoviewer.repository.NeoRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -14,32 +18,48 @@ class NeoRepositoryTests {
     private lateinit var neoResponseList: List<NeoResponse>
     private lateinit var repository: NeoRepository
 
+    private val expectedData = listOf(
+        Neo(1, "name1", "designation1", "jpl_url1", false,
+            1F, 1F, 1F, 1F,
+            1F, 1F, 1F, 1F,
+        ),
+        Neo(2, "name2", "designation2", "jpl_url2", false,
+            2F, 2F, 2F, 2F,
+            2F, 2F, 2F, 2F,
+        ),
+        Neo(3, "name3", "designation3", "jpl_url3", true,
+            3F, 3F, 3F, 3F,
+            3F, 3F, 3F, 3F,
+        )
+    )
+
+    // creating an instance of the repository to test
     @Before
     fun createRepository() {
         val neoResponse1 = NeoResponse(
-            1,
-            "name1",
-            "designation1",
-            "jpl_url1",
-            false,
-            DiameterData(
-                DiameterValues(1F, 1F),
-                DiameterValues(1F, 1F),
-                DiameterValues(1F, 1F),
-                DiameterValues(1F, 1F)
-            )
-        )
-        val neoResponse2 = NeoResponse(
             2,
             "name2",
             "designation2",
             "jpl_url2",
-            true,
+            false,
             DiameterData(
                 DiameterValues(2F, 2F),
                 DiameterValues(2F, 2F),
                 DiameterValues(2F, 2F),
                 DiameterValues(2F, 2F)
+            )
+        )
+        val neoResponse2 = NeoResponse(
+            3,
+            "name3",
+            "designation3",
+            "jpl_url3",
+            true,
+            DiameterData(
+                DiameterValues(3F, 3F),
+                DiameterValues(3F, 3F),
+                DiameterValues(3F, 3F),
+                DiameterValues(3F, 3F)
             )
         )
         neoResponseList = listOf(neoResponse1, neoResponse2)
@@ -52,9 +72,9 @@ class NeoRepositoryTests {
         // building a FakeNeoDao with some data for testing
         val fakeNeoDao = FakeNeoDao().apply {
             this.insertAllBlocking(listOf(
-                Neo(3, "name3", "designation3", "jpl_url3", false,
-                    3F, 3F, 3F, 3F,
-                    3F, 3F, 3F, 3F,
+                Neo(1, "name1", "designation1", "jpl_url1", false,
+                    1F, 1F, 1F, 1F,
+                    1F, 1F, 1F, 1F,
                 )
             ))
         }
@@ -63,5 +83,16 @@ class NeoRepositoryTests {
             FakeNeoService(browseResponse),
             fakeNeoDao
         )
+    }
+
+    //TODO this test gets stuck in an infinite loop
+    @Test
+    fun getBrowseResultFlow_updatesCacheFromNetwork() {
+        runTest {
+            repository.getBrowseResultFlow().collect {
+                it as BrowseResult.Success
+                assert(it.items == expectedData)
+            }
+        }
     }
 }

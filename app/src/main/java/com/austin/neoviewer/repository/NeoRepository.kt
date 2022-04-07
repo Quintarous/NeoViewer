@@ -1,22 +1,32 @@
-package com.austin.neoviewer
+package com.austin.neoviewer.repository
 
+import android.util.Log
 import com.austin.neoviewer.database.Neo
 import com.austin.neoviewer.database.NeoDao
 import com.austin.neoviewer.network.NeoResponse
 import com.austin.neoviewer.network.NeoService
-import javax.inject.Inject
+import kotlinx.coroutines.flow.*
+import retrofit2.HttpException
+import java.io.IOException
 
-// TODO setup dependency injection and write unit tests before continuing!
-class NeoRepository @Inject constructor (
-    private val service: NeoService,
-    private val neoDao: NeoDao) {
+private const val TAG = "NeoRepository"
 
-    private val currentPage: Int = 0
+class NeoRepository (private val service: NeoService, private val neoDao: NeoDao) {
+
+    private var currentPage: Int = 0
 
     private var requestInProgress: Boolean = false
 
-    // TODO test this method
-    private suspend fun updateDatabase(): Boolean {
+    private val browseResultFlow = MutableSharedFlow<BrowseResult>(replay = 1)
+
+
+    suspend fun getBrowseResultFlow(): MutableSharedFlow<BrowseResult> {
+        cacheBrowseData()
+        return browseResultFlow
+    }
+
+
+    private suspend fun cacheBrowseData(): Boolean {
         requestInProgress = true
         var success = false
 
@@ -25,16 +35,18 @@ class NeoRepository @Inject constructor (
             // process data into a list of Neo objects to be stored in the db
             val processedResponse: List<Neo> = processNeoResponse(networkResponse.items)
             neoDao.insertAll(processedResponse) // insert them into the db
+            browseResultFlow.emit(BrowseResult.Success(neoDao.getAllNonFlow()))
             success = true
-        } catch (e: Exception) {
-            TODO("handle the network erroring out gracefully")
+        } catch (e: IOException) {
+            browseResultFlow.emit(BrowseResult.Error(e))
+        } catch (e: HttpException) {
+            browseResultFlow.emit(BrowseResult.Error(e))
         }
-
         requestInProgress = false
         return success
     }
 
-    // TODO test this method
+
     private fun processNeoResponse(input: List<NeoResponse>): List<Neo> {
         val output = mutableListOf<Neo>()
         for (neo in input) {
@@ -56,7 +68,6 @@ class NeoRepository @Inject constructor (
                 )
             )
         }
-
         return output
     }
 }
