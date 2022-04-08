@@ -10,10 +10,7 @@ interface NeoDao {
     suspend fun insertAll(items: List<Neo>)
 
     @Query("SELECT * FROM Neo")
-    fun getAll(): Flow<List<Neo>>
-
-    @Query("SELECT * FROM Neo")
-    fun getAllNonFlow(): List<Neo>
+    fun getAll(): List<Neo>
 
     @Query("DELETE FROM Neo")
     fun clearDatabase()

@@ -1,17 +1,22 @@
 package com.austin.neoviewer.repository
 
-import android.util.Log
 import com.austin.neoviewer.database.Neo
 import com.austin.neoviewer.database.NeoDao
 import com.austin.neoviewer.network.NeoResponse
 import com.austin.neoviewer.network.NeoService
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import retrofit2.HttpException
 import java.io.IOException
 
 private const val TAG = "NeoRepository"
 
-class NeoRepository (private val service: NeoService, private val neoDao: NeoDao) {
+class NeoRepository (
+    private val service: NeoService,
+    private val neoDao: NeoDao,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) {
 
     private var currentPage: Int = 0
 
@@ -35,7 +40,7 @@ class NeoRepository (private val service: NeoService, private val neoDao: NeoDao
             // process data into a list of Neo objects to be stored in the db
             val processedResponse: List<Neo> = processNeoResponse(networkResponse.items)
             neoDao.insertAll(processedResponse) // insert them into the db
-            browseResultFlow.emit(BrowseResult.Success(neoDao.getAllNonFlow()))
+            browseResultFlow.emit(BrowseResult.Success(neoDao.getAll()))
             success = true
         } catch (e: IOException) {
             browseResultFlow.emit(BrowseResult.Error(e))

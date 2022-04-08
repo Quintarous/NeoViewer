@@ -16,13 +16,7 @@ class FakeNeoDao : NeoDao {
         neoList.addAll(items)
     }
 
-    override fun getAll(): Flow<List<Neo>> {
-        return flow {
-            emit(neoList)
-        }
-    }
-
-    override fun getAllNonFlow(): List<Neo> = neoList
+    override fun getAll(): List<Neo> = neoList
 
     override fun clearDatabase() = neoList.clear()
 }

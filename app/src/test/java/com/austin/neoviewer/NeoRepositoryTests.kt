@@ -6,8 +6,8 @@ import com.austin.neoviewer.network.*
 import com.austin.neoviewer.repository.BrowseResult
 import com.austin.neoviewer.repository.NeoRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -81,18 +81,19 @@ class NeoRepositoryTests {
 
         repository = NeoRepository(
             FakeNeoService(browseResponse),
-            fakeNeoDao
+            fakeNeoDao,
+            StandardTestDispatcher()
         )
     }
 
-    //TODO this test gets stuck in an infinite loop
+
     @Test
     fun getBrowseResultFlow_updatesCacheFromNetwork() {
         runTest {
-            repository.getBrowseResultFlow().collect {
-                it as BrowseResult.Success
-                assert(it.items == expectedData)
-            }
+            val result = repository.getBrowseResultFlow().first()
+            assert(result is BrowseResult.Success)
+            result as BrowseResult.Success
+            assert(result.items == expectedData)
         }
     }
 }
