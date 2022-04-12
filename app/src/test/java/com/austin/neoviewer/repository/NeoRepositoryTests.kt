@@ -1,10 +1,8 @@
-package com.austin.neoviewer
+package com.austin.neoviewer.repository
 
 import com.austin.neoviewer.database.FakeNeoDao
 import com.austin.neoviewer.database.Neo
 import com.austin.neoviewer.network.*
-import com.austin.neoviewer.repository.BrowseResult
-import com.austin.neoviewer.repository.NeoRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -37,6 +35,19 @@ class NeoRepositoryTests {
     @Before
     fun createRepository() {
         val neoResponse1 = NeoResponse(
+            1,
+            "name1",
+            "designation1",
+            "jpl_url1",
+            false,
+            DiameterData(
+                DiameterValues(1F, 1F),
+                DiameterValues(1F, 1F),
+                DiameterValues(1F, 1F),
+                DiameterValues(1F, 1F)
+            )
+        )
+        val neoResponse2 = NeoResponse(
             2,
             "name2",
             "designation2",
@@ -49,7 +60,7 @@ class NeoRepositoryTests {
                 DiameterValues(2F, 2F)
             )
         )
-        val neoResponse2 = NeoResponse(
+        val neoResponse3 = NeoResponse(
             3,
             "name3",
             "designation3",
@@ -62,7 +73,7 @@ class NeoRepositoryTests {
                 DiameterValues(3F, 3F)
             )
         )
-        neoResponseList = listOf(neoResponse1, neoResponse2)
+        neoResponseList = listOf(neoResponse1, neoResponse2, neoResponse3)
 
         val browseResponse = BrowseResponse(
             PageStats(3, 29089, 1455, 112),

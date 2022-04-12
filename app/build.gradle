@@ -75,6 +75,7 @@ dependencies {
     // paging
     testImplementation("androidx.paging:paging-common:$paging_version")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
+    testImplementation "androidx.arch.core:core-testing:$arch_testing_version"
 
 
     // instrumented testing dependencies

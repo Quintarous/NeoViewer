@@ -6,6 +6,7 @@ import com.austin.neoviewer.repository.NeoRepository
 import com.austin.neoviewer.database.NeoDatabase
 import com.austin.neoviewer.network.BASE_URL
 import com.austin.neoviewer.network.NeoService
+import com.austin.neoviewer.repository.NeoRepositoryInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,6 +49,6 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideNeoRepository(service: NeoService, db: NeoDatabase): NeoRepository =
+    fun provideNeoRepository(service: NeoService, db: NeoDatabase): NeoRepositoryInterface =
         NeoRepository(service, db.getDao())
 }
