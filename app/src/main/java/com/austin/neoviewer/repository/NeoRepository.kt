@@ -40,8 +40,8 @@ class NeoRepository (
 
 
     override suspend fun fetchMoreBrowseData() {
-        currentPage++
-        if (requestInProgress) {
+        if (!requestInProgress) {
+            currentPage++
             withContext(dispatcher) { cacheBrowseData() }
         }
     }

@@ -107,4 +107,6 @@ class NeoRepositoryTests {
             assert(result.items == expectedData)
         }
     }
+
+    // TODO write a test for if the network fails
 }

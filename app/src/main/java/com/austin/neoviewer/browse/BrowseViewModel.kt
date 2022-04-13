@@ -24,4 +24,10 @@ class BrowseViewModel @Inject constructor (
         val browseResult = repository.getBrowseResultFlow().asLiveData()
         emitSource(browseResult)
     }
+
+    fun getMoreBrowseData() {
+        viewModelScope.launch(dispatcher) {
+            repository.fetchMoreBrowseData()
+        }
+    }
 }

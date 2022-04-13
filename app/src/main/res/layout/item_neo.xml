@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/neo_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            app:layout_constraintBottom_toBottomOf="@+id/neo_jpl_url"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/neo_jpl_url"
+            tools:text="name" />
+
+        <TextView
+            android:id="@+id/neo_jpl_url"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:textAlignment="textEnd"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.75"
+            app:layout_constraintStart_toEndOf="@+id/neo_name"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=2000433" />
+
+        <TextView
+            android:id="@+id/neo_designation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/neo_name"
+            app:layout_constraintTop_toTopOf="@+id/neo_hazardous"
+            tools:text="designation" />
+
+        <TextView
+            android:id="@+id/neo_hazardous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toEndOf="@+id/neo_jpl_url"
+            app:layout_constraintTop_toBottomOf="@+id/neo_jpl_url"
+            tools:text="hazardous" />
+
+        <TextView
+            android:id="@+id/neo_kilometers_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/neo_designation"
+            app:layout_constraintTop_toBottomOf="@+id/neo_designation"
+            tools:text="kilometers min"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/neo_kilometers_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/neo_kilometers_min"
+            app:layout_constraintTop_toBottomOf="@+id/neo_kilometers_min"
+            tools:text="kilometers max"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/neo_meters_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/neo_kilometers_max"
+            app:layout_constraintTop_toBottomOf="@+id/neo_kilometers_max"
+            tools:text="meters min"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/neo_meters_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/neo_meters_min"
+            app:layout_constraintTop_toBottomOf="@+id/neo_meters_min"
+            tools:text="meters max"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/neo_miles_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/neo_hazardous"
+            app:layout_constraintTop_toBottomOf="@+id/neo_hazardous"
+            tools:text="miles min"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/neo_miles_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/neo_miles_min"
+            app:layout_constraintTop_toBottomOf="@+id/neo_miles_min"
+            tools:text="miles max"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/neo_feet_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/neo_miles_max"
+            app:layout_constraintTop_toBottomOf="@+id/neo_miles_max"
+            tools:text="feet min"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/neo_feet_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/neo_feet_min"
+            app:layout_constraintTop_toBottomOf="@+id/neo_feet_min"
+            tools:text="feet max"
+            tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
