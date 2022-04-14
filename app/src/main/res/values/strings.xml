@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">NeoViewer</string>
+    <string name="neo_name_label">Name:</string>
+    <string name="neo_jpl_label">JPL Url:</string>
+    <string name="neo_designation_label">Designation:</string>
+    <string name="neo_hazardous_label">Hazardous:</string>
+    <string name="neo_diameter_min_label">Min:</string>
+    <string name="neo_diameter_max_label">Max:</string>
 </resources>

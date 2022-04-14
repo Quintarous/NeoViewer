@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.austin.neoviewer.databinding.FragBrowseBinding
 import com.austin.neoviewer.repository.BrowseResult
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,8 +33,10 @@ class BrowseFragment: Fragment() {
 
         val adapter = BrowseRecyclerAdapter()
         binding.browseRecycler.adapter = adapter
+        val divider = DividerItemDecoration(this.requireContext(), DividerItemDecoration.VERTICAL)
+        binding.browseRecycler.addItemDecoration(divider)
 
-        // observer on the neoList livedata list of Neo objects
+        // observer for the neoList livedata
         viewModel.neoList.observe(viewLifecycleOwner) { result ->
             when (result) {
                 // on a successful network response submit the list to the recycler view

@@ -1,9 +1,11 @@
 package com.austin.neoviewer.database
 
+import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
 
+@VisibleForTesting(otherwise = VisibleForTesting.NONE)
 class FakeNeoDao : NeoDao {
 
     val neoList = mutableListOf<Neo>()
