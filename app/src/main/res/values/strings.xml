@@ -6,4 +6,11 @@
     <string name="neo_hazardous_label">Hazardous:</string>
     <string name="neo_diameter_min_label">Min:</string>
     <string name="neo_diameter_max_label">Max:</string>
+    <string name="kilometers_label">Kilometers</string>
+    <string name="meters_label">Meters</string>
+    <string name="miles_label">Miles</string>
+    <string name="feet_label">Feet</string>
+    <string name="diameter_label">Estimated Diameter</string>
+    <string name="error_label">Network Error!</string>
+    <string name="no_exception">No exception message</string>
 </resources>

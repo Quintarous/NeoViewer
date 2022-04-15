@@ -21,7 +21,7 @@ class NeoRepository (
 
     private var currentPage: Int = 0
 
-    private var requestInProgress: Boolean = false
+    override var requestInProgress: Boolean = false
 
     private val browseResultFlow = MutableSharedFlow<BrowseResult>(replay = 1)
 
@@ -40,10 +40,8 @@ class NeoRepository (
 
 
     override suspend fun fetchMoreBrowseData() {
-        if (!requestInProgress) {
-            currentPage++
-            withContext(dispatcher) { cacheBrowseData() }
-        }
+        currentPage++
+        withContext(dispatcher) { cacheBrowseData() }
     }
 
 

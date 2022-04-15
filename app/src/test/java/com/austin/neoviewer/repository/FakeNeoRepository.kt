@@ -11,9 +11,10 @@ const val EXCEPTION_MESSAGE = "exception message"
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)
 class FakeNeoRepository: NeoRepositoryInterface {
 
+    override var requestInProgress: Boolean = false
     var hasData = false
 
-    val neo1 = Neo(1, "name1", "designation1", "jpl_url1", false,
+    private val neo1 = Neo(1, "name1", "designation1", "jpl_url1", false,
         1F, 1F, 1F, 1F,
         1F, 1F, 1F, 1F,
     )

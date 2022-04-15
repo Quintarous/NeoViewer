@@ -25,9 +25,14 @@ class BrowseViewModel @Inject constructor (
         emitSource(browseResult)
     }
 
+    // TODO have the scroll listener call a different method that checks the last item emitted on the neoList
+    // LiveData and only makes a fetch request if it was NOT a BrowseResult.Error so we're not spamming
+    // network requests and the only way for the user to retry is to hit the retry button
     fun getMoreBrowseData() {
-        viewModelScope.launch(dispatcher) {
-            repository.fetchMoreBrowseData()
+        if (!repository.requestInProgress) {
+            viewModelScope.launch(dispatcher) {
+                repository.fetchMoreBrowseData()
+            }
         }
     }
 }

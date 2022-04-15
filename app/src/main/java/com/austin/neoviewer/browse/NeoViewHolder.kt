@@ -10,15 +10,6 @@ class NeoViewHolder (private val view: ItemNeoBinding): RecyclerView.ViewHolder(
     init {
         view.root.setOnClickListener {
             view.cardView.toggleVisibility()
-//            view.neoKilometersMin.toggleVisibility()
-//            view.neoKilometersMax.toggleVisibility()
-//            view.neoMetersMin.toggleVisibility()
-//            view.neoMetersMax.toggleVisibility()
-//            view.neoMilesMin.toggleVisibility()
-//            view.neoMilesMax.toggleVisibility()
-//            view.neoFeetMin.toggleVisibility()
-//            view.neoFeetMax.toggleVisibility()
-//            view.kilometersMinLabel.toggleVisibility()
         }
     }
 
