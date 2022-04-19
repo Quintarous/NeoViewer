@@ -13,4 +13,6 @@
     <string name="diameter_label">Estimated Diameter</string>
     <string name="error_label">Network Error!</string>
     <string name="no_exception">No exception message</string>
+    <string name="retry">Retry</string>
+    <string name="network_error_toast">A network error occurred!</string>
 </resources>

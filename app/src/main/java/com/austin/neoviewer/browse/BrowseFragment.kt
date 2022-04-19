@@ -1,11 +1,16 @@
 package com.austin.neoviewer.browse
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.map
@@ -37,8 +42,16 @@ class BrowseFragment: Fragment() {
             viewmodel = viewModel
         }
 
-        // setting up the browse recycler view
-        val adapter = BrowseRecyclerAdapter()
+        val clipboard = getSystemService(requireContext(), ClipboardManager::class.java) as ClipboardManager
+
+        // setting up the browse recycler view with it's adapter
+        val retryLambda = { viewModel.retry() }
+        // TODO finish the copy button
+        val copyLambda = { url: String ->
+            val clip = ClipData.newPlainText("plain text", url)
+            clipboard.setPrimaryClip(clip)
+        }
+        val adapter = BrowseRecyclerAdapter(retryLambda, copyLambda)
         binding.browseRecycler.adapter = adapter
         val divider = DividerItemDecoration(this.requireContext(), DividerItemDecoration.VERTICAL)
         binding.browseRecycler.addItemDecoration(divider)
@@ -55,12 +68,18 @@ class BrowseFragment: Fragment() {
                     }
                     adapter.submitList(listToSubmit)
                 }
-// TODO add a retry button to the error footer
-// TODO have some logic for removing the error footer
-                // when a network error occurs add a network error footer to the list
+
+                // when a network error occurs add a network error footer to the end of the list
                 is BrowseResult.Error -> {
                     adapter.apply {
                         if (currentList.isEmpty() || currentList.last() !is BrowseItem.Error) {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.network_error_toast),
+                                Toast.LENGTH_SHORT
+                            ).show() // show a toast alerting the user a network error occurred
+
+                            // showing the network error item and retry button as a footer
                             val outputList = mutableListOf<BrowseItem>()
                             outputList.addAll(currentList)
                             outputList.add(

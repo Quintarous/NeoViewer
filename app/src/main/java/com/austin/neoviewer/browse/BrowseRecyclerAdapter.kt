@@ -1,17 +1,18 @@
 package com.austin.neoviewer.browse
 
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.austin.neoviewer.R
-import com.austin.neoviewer.database.Neo
 import com.austin.neoviewer.databinding.ItemErrorBinding
 import com.austin.neoviewer.databinding.ItemNeoBinding
 
-class BrowseRecyclerAdapter: ListAdapter<BrowseItem, RecyclerView.ViewHolder>(NEO_COMPARATOR) {
+class BrowseRecyclerAdapter(
+    private val retryLambda: () -> Unit,
+    private val copyLambda: (String) -> Unit
+) : ListAdapter<BrowseItem, RecyclerView.ViewHolder>(NEO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         // when the item is a Neo object return a NeoViewHolder
@@ -22,7 +23,7 @@ class BrowseRecyclerAdapter: ListAdapter<BrowseItem, RecyclerView.ViewHolder>(NE
                     parent,
                     false
                 )
-                NeoViewHolder(view)
+                NeoViewHolder(view, copyLambda)
             }
 
             // else it must be a network error so return an ErrorViewHolder
@@ -32,7 +33,7 @@ class BrowseRecyclerAdapter: ListAdapter<BrowseItem, RecyclerView.ViewHolder>(NE
                     parent,
                     false
                 )
-                ErrorViewHolder(view)
+                ErrorViewHolder(view, retryLambda)
             }
         }
     }
@@ -55,6 +56,13 @@ class BrowseRecyclerAdapter: ListAdapter<BrowseItem, RecyclerView.ViewHolder>(NE
         return when (getItem(position)) {
             is BrowseItem.Holder -> R.layout.item_neo
             else -> R.layout.item_error
+        }
+    }
+
+    // resetting the cardView's visibility so it doesn't carry over when it's recycled
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        if (holder is NeoViewHolder) {
+            holder.resetViewState()
         }
     }
 

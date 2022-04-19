@@ -5,11 +5,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.austin.neoviewer.database.Neo
 import com.austin.neoviewer.databinding.ItemNeoBinding
 
-class NeoViewHolder (private val view: ItemNeoBinding): RecyclerView.ViewHolder(view.root) {
+class NeoViewHolder (
+    private val view: ItemNeoBinding,
+    private val copyLambda: (String) -> Unit
+): RecyclerView.ViewHolder(view.root) {
 
     init {
         view.root.setOnClickListener {
             view.cardView.toggleVisibility()
+            view.jplCopyButton.setOnClickListener { copyLambda(view.neoJplUrl.text.toString()) }
         }
     }
 
@@ -18,6 +22,10 @@ class NeoViewHolder (private val view: ItemNeoBinding): RecyclerView.ViewHolder(
             View.GONE -> View.VISIBLE
             else -> View.GONE
         }
+    }
+
+    fun resetViewState() {
+        view.cardView.visibility = View.GONE
     }
 
     fun bind(neo: Neo) {

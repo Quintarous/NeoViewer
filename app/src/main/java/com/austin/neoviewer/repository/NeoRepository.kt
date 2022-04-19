@@ -44,6 +44,10 @@ class NeoRepository (
         withContext(dispatcher) { cacheBrowseData() }
     }
 
+    override suspend fun retryBrowseDataFetch() {
+        withContext(dispatcher) { cacheBrowseData() }
+    }
+
 
     private suspend fun cacheBrowseData(): Boolean {
         requestInProgress = true

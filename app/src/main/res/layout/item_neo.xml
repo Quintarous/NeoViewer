@@ -25,15 +25,25 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="24dp"
-            android:textAlignment="textEnd"
+            android:layout_marginEnd="8dp"
+            android:textAlignment="textStart"
             app:layout_constraintBottom_toBottomOf="@+id/jpl_url_label"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintEnd_toStartOf="@+id/jpl_copy_button"
             app:layout_constraintStart_toEndOf="@+id/jpl_url_label"
             app:layout_constraintTop_toTopOf="@+id/jpl_url_label"
             app:layout_constraintVertical_bias="0.0"
             tools:text="http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=2000433" />
+
+        <ImageButton
+            android:id="@+id/jpl_copy_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:background="#00FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/neo_jpl_url"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/neo_jpl_url"
+            app:srcCompat="?attr/actionModeCopyDrawable" />
 
         <TextView
             android:id="@+id/neo_hazardous"
@@ -69,7 +79,7 @@
             android:id="@+id/designation_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:layout_marginBottom="16dp"
             android:text="@string/neo_designation_label"
             android:textAlignment="textEnd"

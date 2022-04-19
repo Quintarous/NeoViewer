@@ -9,4 +9,6 @@ interface NeoRepositoryInterface {
     suspend fun getBrowseResultFlow(): Flow<BrowseResult>
 
     suspend fun fetchMoreBrowseData()
+
+    suspend fun retryBrowseDataFetch()
 }
