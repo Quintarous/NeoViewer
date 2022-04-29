@@ -1,8 +1,8 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-    id("dagger.hilt.android.plugin")
-    id("kotlin-kapt")
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+    id "dagger.hilt.android.plugin"
+    id "kotlin-kapt"
 }
 
 android {
@@ -15,7 +15,20 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.austin.neoviewer.CustomTestRunner"
+    }
+
+    android {
+        sourceSets {
+            String sharedTestDir = 'src/sharedTest/java'
+            test {
+                java.srcDirs += sharedTestDir
+            }
+            androidTest {
+                java.srcDirs += sharedTestDir
+            }
+        }
     }
 
     buildTypes {
@@ -36,10 +49,13 @@ android {
         enabled = true
         enabledForTests = true
     }
-}
 
-kapt {
-    correctErrorTypes = true
+    packagingOptions {
+        // Multiple dependency bring these files in. Exclude them to enable
+        // our test APK to build (has no effect on our AARs)
+        excludes += "/META-INF/AL2.0"
+        excludes += "/META-INF/LGPL2.1"
+    }
 }
 
 dependencies {
@@ -60,15 +76,28 @@ dependencies {
     implementation("androidx.paging:paging-runtime:$paging_version")
     // room
     implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     testImplementation("androidx.room:room-testing:$room_version")
     implementation("androidx.room:room-paging:2.5.0-alpha01")
+
     //hilt
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+
+    //hilt testing
+    // For Robolectric tests.
+    testImplementation("com.google.dagger:hilt-android-testing:$hilt_version")
+    // ...with Kotlin.
+    kaptTest("com.google.dagger:hilt-android-compiler:$hilt_version")
+    // For instrumented tests.
+    androidTestImplementation("com.google.dagger:hilt-android-testing:$hilt_version")
+    // ...with Kotlin.
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hilt_version")
+
 
     // unit testing dependencies
     testImplementation "junit:junit:$junit_version"
@@ -83,6 +112,7 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+    //debugImplementation("androidx.fragment:fragment-testing:$fragment_version") // this one wants to be debug, codelab says use Implementation
     // Core library
     androidTestImplementation("androidx.test:core:$androidx_test_version")
     // AndroidJUnitRunner and JUnit Rules

@@ -5,7 +5,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-        <variable name="viewmodel" type="com.austin.neoviewer.browse.BrowseViewModel"/>
+        <variable name="viewModel" type="com.austin.neoviewer.browse.BrowseViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -23,9 +23,7 @@ import com.austin.neoviewer.repository.BrowseResult
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "BrowseFragment"
-
-//TODO implement an animated transition for the diameter data card being displayed
-
+//TODO fix all black retry button
 @AndroidEntryPoint
 class BrowseFragment: Fragment() {
 
@@ -39,17 +37,17 @@ class BrowseFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragBrowseBinding.inflate(inflater, container, false).apply {
-            viewmodel = viewModel
+            viewModel = viewModel
         }
 
         val clipboard = getSystemService(requireContext(), ClipboardManager::class.java) as ClipboardManager
 
         // setting up the browse recycler view with it's adapter
         val retryLambda = { viewModel.retry() }
-        // TODO finish the copy button
         val copyLambda = { url: String ->
             val clip = ClipData.newPlainText("plain text", url)
             clipboard.setPrimaryClip(clip)
+            Toast.makeText(requireContext(), "Copied Url", Toast.LENGTH_SHORT).show()
         }
         val adapter = BrowseRecyclerAdapter(retryLambda, copyLambda)
         binding.browseRecycler.adapter = adapter
