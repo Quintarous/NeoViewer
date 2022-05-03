@@ -3,6 +3,7 @@ package com.austin.neoviewer.browse
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.austin.neoviewer.database.Neo
 import com.austin.neoviewer.repository.BrowseResult
 import com.austin.neoviewer.repository.NeoRepositoryInterface
@@ -36,9 +37,10 @@ class BrowseViewModel @Inject constructor (
         }
     }
 
-    fun retry() {
+    fun retry(swipeRefreshLayout: SwipeRefreshLayout) {
         viewModelScope.launch(dispatcher) {
             repository.retryBrowseDataFetch()
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 }

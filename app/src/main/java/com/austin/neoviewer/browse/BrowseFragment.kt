@@ -6,9 +6,7 @@ import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
@@ -23,7 +21,7 @@ import com.austin.neoviewer.repository.BrowseResult
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "BrowseFragment"
-//TODO fix all black retry button
+
 @AndroidEntryPoint
 class BrowseFragment: Fragment() {
 
@@ -42,8 +40,9 @@ class BrowseFragment: Fragment() {
 
         val clipboard = getSystemService(requireContext(), ClipboardManager::class.java) as ClipboardManager
 
+
         // setting up the browse recycler view with it's adapter
-        val retryLambda = { viewModel.retry() }
+        val retryLambda = { viewModel.retry(binding.browseSwipeRefresh) }
         val copyLambda = { url: String ->
             val clip = ClipData.newPlainText("plain text", url)
             clipboard.setPrimaryClip(clip)
@@ -53,6 +52,11 @@ class BrowseFragment: Fragment() {
         binding.browseRecycler.adapter = adapter
         val divider = DividerItemDecoration(this.requireContext(), DividerItemDecoration.VERTICAL)
         binding.browseRecycler.addItemDecoration(divider)
+
+
+        binding.browseSwipeRefresh.setOnRefreshListener {
+            viewModel.retry(binding.browseSwipeRefresh)
+        }
 
 
         // observer for the neoList livedata
@@ -103,6 +107,11 @@ class BrowseFragment: Fragment() {
         })
 
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.browse_fragment_menu, menu)
+        // TODO this menu doesn't show up
     }
 
 }

@@ -13,8 +13,8 @@ class NeoViewHolder (
     init {
         view.root.setOnClickListener {
             view.cardView.toggleVisibility()
-            view.jplCopyButton.setOnClickListener { copyLambda(view.neoJplUrl.text.toString()) }
         }
+        view.jplCopyButton.setOnClickListener { copyLambda(view.neoJplUrl.text.toString()) }
     }
 
     private fun View.toggleVisibility() {
