@@ -1,5 +1,6 @@
 package com.austin.neoviewer.browse
 
+import android.app.ActionBar
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -15,6 +16,7 @@ import androidx.lifecycle.map
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.austin.neoviewer.MainActivity
 import com.austin.neoviewer.R
 import com.austin.neoviewer.databinding.FragBrowseBinding
 import com.austin.neoviewer.repository.BrowseResult
@@ -37,6 +39,7 @@ class BrowseFragment: Fragment() {
         binding = FragBrowseBinding.inflate(inflater, container, false).apply {
             viewModel = viewModel
         }
+        setHasOptionsMenu(true)
 
         val clipboard = getSystemService(requireContext(), ClipboardManager::class.java) as ClipboardManager
 
@@ -109,11 +112,22 @@ class BrowseFragment: Fragment() {
         return binding.root
     }
 
+
+    // setting up the menu with the refresh button
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.browse_fragment_menu, menu)
         // TODO this menu doesn't show up
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_refresh -> {
+                viewModel.retry(binding.browseSwipeRefresh)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 }
 
 private const val FETCH_DATA_THRESHOLD = 8
