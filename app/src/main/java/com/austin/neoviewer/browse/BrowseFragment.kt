@@ -1,42 +1,46 @@
 package com.austin.neoviewer.browse
 
-import android.app.ActionBar
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
-import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.map
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.austin.neoviewer.MainActivity
 import com.austin.neoviewer.R
 import com.austin.neoviewer.databinding.FragBrowseBinding
 import com.austin.neoviewer.repository.BrowseResult
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.launch
 
 private const val TAG = "BrowseFragment"
+
+lateinit var retryLambda: () -> Unit
 
 @AndroidEntryPoint
 class BrowseFragment: Fragment() {
 
     private val viewModel: BrowseViewModel by viewModels()
 
-    private lateinit var binding: FragBrowseBinding
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragBrowseBinding.inflate(inflater, container, false).apply {
+        val binding = FragBrowseBinding.inflate(inflater, container, false).apply {
             viewModel = viewModel
         }
         setHasOptionsMenu(true)
@@ -45,69 +49,81 @@ class BrowseFragment: Fragment() {
 
 
         // setting up the browse recycler view with it's adapter
-        val retryLambda = { viewModel.retry(binding.browseSwipeRefresh) }
         val copyLambda = { url: String ->
             val clip = ClipData.newPlainText("plain text", url)
             clipboard.setPrimaryClip(clip)
             Toast.makeText(requireContext(), "Copied Url", Toast.LENGTH_SHORT).show()
         }
-        val adapter = BrowseRecyclerAdapter(retryLambda, copyLambda)
-        binding.browseRecycler.adapter = adapter
+        val adapter = BrowseRecyclerAdapter(copyLambda)
+        val header = BrowseLoadStateAdapter { adapter.retry() }
+        retryLambda = { adapter.retry() } // this is for the retry menu button
+        val concatAdapter = adapter.withLoadStateHeaderAndFooter(
+            footer = BrowseLoadStateAdapter { adapter.retry() },
+            header = header
+        )
+        binding.browseRecycler.adapter = concatAdapter
+
+        // adding the divider decorations to make the list more readable
         val divider = DividerItemDecoration(this.requireContext(), DividerItemDecoration.VERTICAL)
         binding.browseRecycler.addItemDecoration(divider)
 
 
+        // initiate a data refresh when the user does a swipe to refresh gesture
         binding.browseSwipeRefresh.setOnRefreshListener {
-            viewModel.retry(binding.browseSwipeRefresh)
+            adapter.retry()
         }
 
+        // setting the on click listener for the retry button that appears when no data is cached
+        binding.browseFragRetryButton.setOnClickListener { adapter.retry() }
 
-        // observer for the neoList livedata
-        viewModel.neoList.observe(viewLifecycleOwner) { result ->
-            // when result is a success process into a list of BrowseItems and submit
-            when (result) {
-                is BrowseResult.Success -> {
-                    val listToSubmit = mutableListOf<BrowseItem>()
-                    for (neo in result.items) {
-                        listToSubmit.add(BrowseItem.Holder(neo))
-                    }
-                    adapter.submitList(listToSubmit)
-                }
 
-                // when a network error occurs add a network error footer to the end of the list
-                is BrowseResult.Error -> {
-                    adapter.apply {
-                        if (currentList.isEmpty() || currentList.last() !is BrowseItem.Error) {
-                            Toast.makeText(
-                                context,
-                                getString(R.string.network_error_toast),
-                                Toast.LENGTH_SHORT
-                            ).show() // show a toast alerting the user a network error occurred
-
-                            // showing the network error item and retry button as a footer
-                            val outputList = mutableListOf<BrowseItem>()
-                            outputList.addAll(currentList)
-                            outputList.add(
-                                BrowseItem.Error(result.e.message ?: getString(R.string.no_exception))
-                            )
-                            submitList(outputList)
-                        }
-                    }
-                }
+        // collecting the pagingData and submitting it to the adapter
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.pagingDataFlow.collectLatest { pagingData ->
+                adapter.submitData(pagingData)
             }
         }
 
-        // adding a scroll listener that requests more data to be loaded when close to the end
-        binding.browseRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = binding.browseRecycler.layoutManager as LinearLayoutManager
-                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-                if (lastVisibleItem + FETCH_DATA_THRESHOLD >= layoutManager.itemCount) {
-                    viewModel.getMoreBrowseData() // request more data
+
+        // Syncing up the UI to the current LoadState
+        viewLifecycleOwner.lifecycleScope.launch {
+            val swipeRefresh = binding.browseSwipeRefresh
+            adapter.loadStateFlow.collectLatest { loadState ->
+                Log.i(TAG, "loadState: $loadState")
+                when (loadState.refresh) {
+                    is LoadState.NotLoading -> {
+                        if (swipeRefresh.isRefreshing) swipeRefresh.isRefreshing = false
+                    }
+
+                    is LoadState.Error -> {
+                        if (swipeRefresh.isRefreshing) swipeRefresh.isRefreshing = false
+                    }
+                }
+
+                // Show a retry header if there was an error refreshing, and items were previously
+                // cached OR default to the default prepend state
+                header.loadState = loadState.mediator
+                    ?.refresh
+                    ?.takeIf { it is LoadState.Error && adapter.itemCount > 0}
+                    ?: loadState.prepend
+
+                binding.browseFragProgressBar.isVisible = loadState.mediator?.refresh is LoadState.Loading
+                binding.browseFragRetryButton.isVisible = loadState.mediator?.refresh is LoadState.Error && adapter.itemCount == 0
+                binding.browseFragErrorMessage.isVisible = loadState.mediator?.refresh is LoadState.Error
+
+                val errorState = loadState.source.append as? LoadState.Error
+                    ?: loadState.source.prepend as? LoadState.Error
+                    ?: loadState.append as? LoadState.Error
+                    ?: loadState.prepend as? LoadState.Error
+                errorState?.let {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.network_error_toast),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
-        })
+        }
 
         return binding.root
     }
@@ -116,18 +132,15 @@ class BrowseFragment: Fragment() {
     // setting up the menu with the refresh button
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.browse_fragment_menu, menu)
-        // TODO this menu doesn't show up
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_refresh -> {
-                viewModel.retry(binding.browseSwipeRefresh)
+                retryLambda.invoke()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 }
-
-private const val FETCH_DATA_THRESHOLD = 8

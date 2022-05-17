@@ -15,5 +15,6 @@
     <string name="no_exception">No exception message</string>
     <string name="retry">Retry</string>
     <string name="network_error_toast">A network error occurred!</string>
+    <string name="network_error_message">A network error occurred please retry.</string>
     <string name="refresh">Refresh</string>
 </resources>

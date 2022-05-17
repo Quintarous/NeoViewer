@@ -50,5 +50,5 @@ object AppModule {
     @Singleton
     @Provides
     fun provideNeoRepository(service: NeoService, db: NeoDatabase): NeoRepositoryInterface =
-        NeoRepository(service, db.getDao())
+        NeoRepository(service, db)
 }

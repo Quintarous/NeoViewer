@@ -20,5 +20,5 @@ class FakeNeoDao : NeoDao {
 
     override fun getAll(): List<Neo> = neoList
 
-    override fun clearDatabase() = neoList.clear()
+    override fun clearNeo() = neoList.clear()
 }

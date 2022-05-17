@@ -19,18 +19,6 @@ android {
         testInstrumentationRunner = "com.austin.neoviewer.CustomTestRunner"
     }
 
-    android {
-        sourceSets {
-            String sharedTestDir = 'src/sharedTest/java'
-            test {
-                java.srcDirs += sharedTestDir
-            }
-            androidTest {
-                java.srcDirs += sharedTestDir
-            }
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -49,13 +37,13 @@ android {
         enabled = true
         enabledForTests = true
     }
-
     packagingOptions {
-        // Multiple dependency bring these files in. Exclude them to enable
-        // our test APK to build (has no effect on our AARs)
-        excludes += "/META-INF/AL2.0"
-        excludes += "/META-INF/LGPL2.1"
+        resources {
+            excludes += ['/META-INF/AL2.0', '/META-INF/LGPL2.1']
+        }
     }
+
+    namespace 'com.austin.neoviewer'
 }
 
 dependencies {
@@ -77,6 +65,7 @@ dependencies {
     implementation("androidx.paging:paging-runtime:$paging_version")
     // room
     implementation("androidx.room:room-runtime:$room_version")
+    testImplementation "junit:junit:$junit_version"
     kapt("androidx.room:room-compiler:$room_version")
 
     // To use Kotlin annotation processing tool (kapt)

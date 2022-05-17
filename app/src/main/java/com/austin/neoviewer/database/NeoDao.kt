@@ -1,5 +1,6 @@
 package com.austin.neoviewer.database
 
+import androidx.paging.PagingSource
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
@@ -10,8 +11,8 @@ interface NeoDao {
     suspend fun insertAll(items: List<Neo>)
 
     @Query("SELECT * FROM Neo")
-    fun getAll(): List<Neo>
+    fun getAll(): PagingSource<Int, Neo>
 
     @Query("DELETE FROM Neo")
-    fun clearDatabase()
+    fun clearNeo()
 }
