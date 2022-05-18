@@ -3,27 +3,19 @@ package com.austin.neoviewer.browse
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.austin.neoviewer.R
 import com.austin.neoviewer.databinding.FragBrowseBinding
-import com.austin.neoviewer.repository.BrowseResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
 
 private const val TAG = "BrowseFragment"
@@ -89,7 +81,6 @@ class BrowseFragment: Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             val swipeRefresh = binding.browseSwipeRefresh
             adapter.loadStateFlow.collectLatest { loadState ->
-                Log.i(TAG, "loadState: $loadState")
                 when (loadState.refresh) {
                     is LoadState.NotLoading -> {
                         if (swipeRefresh.isRefreshing) swipeRefresh.isRefreshing = false

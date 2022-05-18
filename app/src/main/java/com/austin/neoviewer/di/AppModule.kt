@@ -46,9 +46,4 @@ object AppModule {
 
     @Provides
     fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
-
-    @Singleton
-    @Provides
-    fun provideNeoRepository(service: NeoService, db: NeoDatabase): NeoRepositoryInterface =
-        NeoRepository(service, db)
 }
