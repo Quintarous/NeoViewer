@@ -4,10 +4,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Neo(
+data class FeedNeo(
     @PrimaryKey val id: Int,
     val name: String,
-    val designation: String,
     val jplUrl: String,
     val hazardous: Boolean,
     val kilometersDiamMin: Float,
@@ -17,5 +16,6 @@ data class Neo(
     val milesDiamMin: Float,
     val milesDiamMax: Float,
     val feetDiamMin: Float,
-    val feetDiamMax: Float
+    val feetDiamMax: Float,
+    val date: String? = null
 )

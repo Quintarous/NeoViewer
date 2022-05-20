@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.austin.neoviewer.databinding.ItemErrorBinding
 
 class BrowseLoadStateViewHolder(
-    val binding: ItemErrorBinding,
+    private val binding: ItemErrorBinding,
     retry: () -> Unit
 ): RecyclerView.ViewHolder(binding.root) {
 

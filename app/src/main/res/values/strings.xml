@@ -17,4 +17,6 @@
     <string name="network_error_toast">A network error occurred!</string>
     <string name="network_error_message">A network error occurred please retry.</string>
     <string name="refresh">Refresh</string>
+    <string name="copy_toast">Copied Url</string>
+    <string name="sort_by_date">Sort By Date</string>
 </resources>

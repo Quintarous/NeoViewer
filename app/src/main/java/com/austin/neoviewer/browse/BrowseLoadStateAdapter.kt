@@ -15,7 +15,6 @@ class BrowseLoadStateAdapter(
         parent: ViewGroup,
         loadState: LoadState
     ): BrowseLoadStateViewHolder {
-        Log.i("BrowseLoadStateAdapter", "onCreate() called")
         val binding = ItemErrorBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
@@ -25,7 +24,6 @@ class BrowseLoadStateAdapter(
     }
 
     override fun onBindViewHolder(holder: BrowseLoadStateViewHolder, loadState: LoadState) {
-        Log.i("BrowseLoadStateAdapter", "bind() called")
         holder.bind(loadState)
     }
 

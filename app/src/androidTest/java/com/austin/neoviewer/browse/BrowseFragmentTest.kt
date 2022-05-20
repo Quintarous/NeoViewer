@@ -1,12 +1,19 @@
 package com.austin.neoviewer.browse
 
+import android.view.Gravity
+import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
+import androidx.navigation.testing.TestNavHostController
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.DrawerActions.open
+import androidx.test.espresso.contrib.DrawerMatchers.isClosed
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.LargeTest
-import androidx.test.filters.MediumTest
-import com.austin.neoviewer.R
 import com.austin.neoviewer.launchFragmentInHiltContainer
 import com.austin.neoviewer.network.FakeNeoService
 import com.austin.neoviewer.network.NeoService
@@ -14,10 +21,10 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
 import org.junit.Test
-import com.austin.neoviewer.repository.FakeNeoRepository
-import dagger.hilt.android.testing.BindValue
+import com.austin.neoviewer.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import javax.inject.Inject
 
@@ -32,6 +39,11 @@ class BrowseFragmentTest {
     @Before
     fun setup() {
         hiltRule.inject()
+    }
+
+    @After
+    fun cleanup() {
+        (fakeNeoService as FakeNeoService).throwException()
     }
 
     @Inject

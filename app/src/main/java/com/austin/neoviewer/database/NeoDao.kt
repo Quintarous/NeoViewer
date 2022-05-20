@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.SharedFlow
 
 @Dao
 interface NeoDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<Neo>)
 
     @Query("SELECT * FROM Neo")

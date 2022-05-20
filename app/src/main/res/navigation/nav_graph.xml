@@ -2,10 +2,19 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/browseFragment">
+    app:startDestination="@id/browse_fragment">
 
     <fragment
-        android:id="@+id/browseFragment"
+        android:id="@+id/browse_fragment"
         android:name="com.austin.neoviewer.browse.BrowseFragment"
-        android:label="BrowseFragment" />
+        android:label="Browse All" >
+        <action
+            android:id="@+id/action_browseFragment_to_feedFragment"
+            app:destination="@id/feed_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/feed_fragment"
+        android:name="com.austin.neoviewer.feed.FeedFragment"
+        android:label="Sort By Date" />
 </navigation>

@@ -12,4 +12,10 @@ interface NeoService {
     suspend fun neoBrowse(
         @Query("page") page: Int
     ): BrowseResponse
+
+    @GET("feed?api_key=$API_KEY")
+    suspend fun neoFeed(
+        @Query("start_date") startDate: String,
+        @Query("end_date") endDate: String
+    ): FeedResponse
 }

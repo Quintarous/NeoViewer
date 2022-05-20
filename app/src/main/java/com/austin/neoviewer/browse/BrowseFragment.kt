@@ -44,7 +44,7 @@ class BrowseFragment: Fragment() {
         val copyLambda = { url: String ->
             val clip = ClipData.newPlainText("plain text", url)
             clipboard.setPrimaryClip(clip)
-            Toast.makeText(requireContext(), "Copied Url", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.copy_toast), Toast.LENGTH_SHORT).show()
         }
         val adapter = BrowseRecyclerAdapter(copyLambda)
         val header = BrowseLoadStateAdapter { adapter.retry() }
@@ -100,7 +100,7 @@ class BrowseFragment: Fragment() {
 
                 binding.browseFragProgressBar.isVisible = loadState.mediator?.refresh is LoadState.Loading
                 binding.browseFragRetryButton.isVisible = loadState.mediator?.refresh is LoadState.Error && adapter.itemCount == 0
-                binding.browseFragErrorMessage.isVisible = loadState.mediator?.refresh is LoadState.Error
+                binding.browseFragErrorMessage.isVisible = loadState.mediator?.refresh is LoadState.Error && adapter.itemCount == 0
 
                 val errorState = loadState.source.append as? LoadState.Error
                     ?: loadState.source.prepend as? LoadState.Error
