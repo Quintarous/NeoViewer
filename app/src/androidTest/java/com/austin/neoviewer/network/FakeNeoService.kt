@@ -63,4 +63,8 @@ class FakeNeoService() : NeoService {
     fun returnWithoutData() { browseResponse = emptyBrowseResponse }
 
     fun returnWithData() { browseResponse = populatedBrowseResponse }
+
+    override suspend fun neoFeed(startDate: String, endDate: String): FeedResponse {
+        TODO("Not yet implemented")
+    }
 }

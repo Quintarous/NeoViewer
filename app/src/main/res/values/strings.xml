@@ -19,4 +19,6 @@
     <string name="refresh">Refresh</string>
     <string name="copy_toast">Copied Url</string>
     <string name="sort_by_date">Sort By Date</string>
+    <string name="Select_date_range">Select date range</string>
+    <string name="date_range_too_long_toast">Date range can\'t be more than one week!</string>
 </resources>

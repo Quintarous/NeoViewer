@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import com.austin.neoviewer.repository.FeedResult
 import com.austin.neoviewer.repository.NeoRepositoryInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,9 +21,8 @@ class FeedViewModel @Inject constructor (
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ): ViewModel() {
 
-    val feedFlow = liveData(dispatcher) {
-        val result = repository.getFeedFlow().asLiveData()
-        emitSource(result)
+    val feedLiveData = liveData(dispatcher) {
+        emitSource(repository.getFeedFlow().asLiveData())
     }
 
     fun requestNewData(start: String, end: String) {

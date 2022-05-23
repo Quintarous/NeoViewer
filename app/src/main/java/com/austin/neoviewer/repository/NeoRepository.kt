@@ -1,5 +1,6 @@
 package com.austin.neoviewer.repository
 
+import androidx.lifecycle.LiveData
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -16,7 +17,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 private const val TAG = "NeoRepository"
-
+// TODO cancel the retrofit request and start a new one when a new request is made
 class NeoRepository (
     private val service: NeoService,
     private val neoDatabase: NeoDatabase,
@@ -29,6 +30,10 @@ class NeoRepository (
 
     private val feedFlow = MutableSharedFlow<FeedResult>(replay = 1)
 
+    override suspend fun getFeedFlow(): Flow<FeedResult> = feedFlow
+
+
+    // getting the paging data flow for the BrowseFragment
     @OptIn(ExperimentalPagingApi::class)
     override fun getPagingDataFlow(): Flow<PagingData<Neo>> {
         return Pager(
@@ -43,8 +48,7 @@ class NeoRepository (
     }
 
 
-    override fun getFeedFlow(): Flow<FeedResult> = feedFlow
-
+    // makes a network request for feed data and caches it in the db
     private suspend fun cacheFeedData(
         start: String,
         end: String
@@ -62,7 +66,7 @@ class NeoRepository (
                 processedFeedNeos.addAll(processFeedData(day.key, day.value))
             }
             feedNeoDao.clear()
-            if(processedFeedNeos.isNotEmpty()) feedNeoDao.insertAll(processedFeedNeos)
+            feedNeoDao.insertAll(processedFeedNeos)
             emitCachedFeedData()
         } catch(e: IOException) {
             feedFlow.emit(FeedResult.Error(e))
@@ -73,14 +77,20 @@ class NeoRepository (
         requestInProgress = false
     }
 
+
+    // used by the FeedViewModel to get updated data
     override suspend fun getNewFeedData(start: String, end: String) {
         cacheFeedData(start, end)
     }
+
 
     private suspend fun emitCachedFeedData() {
         feedFlow.emit(FeedResult.Success(feedNeoDao.getAll()))
     }
 
+
+    // the feed data returned by the retrofit service needs to be processed from nested data classes
+    // to a bunch of primitives to be inserted into the database
     private fun processFeedData(day: String, list: List<FeedNeoResponse>): List<FeedNeo> {
         val outputList = mutableListOf<FeedNeo>()
         for (response in list) {
