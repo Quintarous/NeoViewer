@@ -1,5 +1,6 @@
 package com.austin.neoviewer.repository
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -45,6 +46,7 @@ class NeoRemoteMediator(
 
         return try {
             val browseResponse = service.neoBrowse(page) // get the response from the network
+            Log.i("bruh", "page: $page browseResponse: ${browseResponse.items}")
             val endOfPaginationReached = browseResponse.items.isEmpty()
             // create all the RemoteKeys for this page of Neo objects
             val prevKey = if (page == STARTING_PAGE) null else page - 1
@@ -59,6 +61,7 @@ class NeoRemoteMediator(
                 }
                 // insert the processed Neo objects and RemoteKeys into the database
                 neoDatabase.getNeoDao().insertAll(processNeoResponse(browseResponse.items))
+                Log.i("bruh", "database updated")
                 neoDatabase.getRemoteKeysDao().insertKeys(newRemoteKeys)
             }
 

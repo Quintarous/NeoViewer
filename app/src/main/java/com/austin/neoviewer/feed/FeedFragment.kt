@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.util.Pair
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.austin.neoviewer.R
@@ -59,6 +60,8 @@ class FeedFragment: Fragment() {
             val firstDate = Calendar.getInstance().apply { timeInMillis = it.first }
             val secondDate = Calendar.getInstance().apply { timeInMillis = it.second }
 
+            // if the date range is larger than 1 week throw away the users input
+            // this is because the api restricts requests to 1 week or less
             if ((secondDate.timeInMillis - firstDate.timeInMillis) > 604800000) {
                 Toast.makeText(
                     requireContext(),
@@ -67,8 +70,6 @@ class FeedFragment: Fragment() {
                 ).show()
                 return@addOnPositiveButtonClickListener
             }
-
-            binding.loadingBar.visibility = View.VISIBLE // showing the loading bar
 
             viewModel.requestNewData(firstDate.formatDateForApi(), secondDate.formatDateForApi())
 
@@ -113,7 +114,7 @@ class FeedFragment: Fragment() {
         // updating the UI based on the returned feed data
         viewModel.feedLiveData.observe(viewLifecycleOwner) { feedResult ->
             Log.i(TAG, "$feedResult")
-            binding.loadingBar.visibility = View.GONE // turning off the loading spinner
+//            binding.loadingBar.visibility = View.GONE // turning off the loading spinner
             adapter.dataset.clear() // clearing the ui for the new data
             when (feedResult) {
                 is FeedResult.Success -> {
@@ -125,6 +126,12 @@ class FeedFragment: Fragment() {
                 }
             }
             adapter.notifyDataSetChanged()
+        }
+
+
+        // tying the loading bars visibility to the repositories requestInProgress flow
+        viewModel.isRequestInProgress.observe(viewLifecycleOwner) {
+            binding.loadingBar.isVisible = it
         }
 
         return binding.root

@@ -3,6 +3,7 @@ package com.austin.neoviewer.network
 import com.austin.neoviewer.database.Neo
 import com.austin.neoviewer.network.BrowseResponse
 import com.austin.neoviewer.network.NeoService
+import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
@@ -56,7 +57,13 @@ class FakeNeoService() : NeoService {
         listOf(neoResponse1, neoResponse2)
     )
 
-    override suspend fun neoBrowse(page: Int): BrowseResponse = browseResponse ?: throw IOException()
+    override suspend fun neoBrowse(page: Int): BrowseResponse {
+        return if (page == 0) {
+            browseResponse ?: throw IOException()
+        } else {
+            emptyBrowseResponse
+        }
+    }
 
     fun throwException() { browseResponse = null }
 
@@ -64,7 +71,7 @@ class FakeNeoService() : NeoService {
 
     fun returnWithData() { browseResponse = populatedBrowseResponse }
 
-    override suspend fun neoFeed(startDate: String, endDate: String): FeedResponse {
+    override fun neoFeed(startDate: String, endDate: String): Call<FeedResponse> {
         TODO("Not yet implemented")
     }
 }

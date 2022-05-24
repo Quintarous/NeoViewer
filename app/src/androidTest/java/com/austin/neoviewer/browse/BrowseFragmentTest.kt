@@ -1,5 +1,6 @@
 package com.austin.neoviewer.browse
 
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -23,6 +24,7 @@ import org.junit.Rule
 import org.junit.Test
 import com.austin.neoviewer.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -49,20 +51,21 @@ class BrowseFragmentTest {
     @Inject
     lateinit var fakeNeoService: NeoService
 
+    // TODO test is flaky because the assertion is racing with the paging library to load the data
     @Test
     fun browseFragment_GivenData_DisplaysCorrectly() {
-        runTest {
-            (fakeNeoService as FakeNeoService).returnWithData()
-            launchFragmentInHiltContainer<BrowseFragment>()
+        (fakeNeoService as FakeNeoService).returnWithData()
+        launchFragmentInHiltContainer<BrowseFragment>()
 
-            onView(withId(R.id.browse_recycler)).check { view, noViewFoundException ->
-                if (noViewFoundException != null) {
-                    throw noViewFoundException
-                }
-
-                val recyclerView = view as RecyclerView
-                assert(recyclerView.adapter?.itemCount == 2)
+        onView(withId(R.id.browse_recycler)).check { view, noViewFoundException ->
+            if (noViewFoundException != null) {
+                throw noViewFoundException
             }
+
+            val recyclerView = view as RecyclerView
+            Log.i("bruh", "item count: ${recyclerView.adapter?.itemCount}")
+
+            assert(recyclerView.adapter?.itemCount == 2)
         }
     }
 

@@ -3,6 +3,7 @@ package com.austin.neoviewer.browse
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
@@ -72,6 +73,7 @@ class BrowseFragment: Fragment() {
         // collecting the pagingData and submitting it to the adapter
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.pagingDataFlow.collectLatest { pagingData ->
+                Log.i("bruh", "pagingData: $pagingData")
                 adapter.submitData(pagingData)
             }
         }

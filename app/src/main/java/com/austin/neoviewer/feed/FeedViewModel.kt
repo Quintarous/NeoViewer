@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 private const val TAG = "FeedViewModel"
@@ -23,6 +24,10 @@ class FeedViewModel @Inject constructor (
 
     val feedLiveData = liveData(dispatcher) {
         emitSource(repository.getFeedFlow().asLiveData())
+    }
+
+    val isRequestInProgress = liveData(dispatcher) {
+        emitSource(repository.requestInProgress.asLiveData())
     }
 
     fun requestNewData(start: String, end: String) {

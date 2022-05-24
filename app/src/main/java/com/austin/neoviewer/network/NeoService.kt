@@ -1,24 +1,23 @@
 package com.austin.neoviewer.network
 
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 const val BASE_URL = "https://api.nasa.gov/neo/rest/v1/"
 const val API_KEY = "TZIMsTB3ztsDc6fdqEyTqGtNy7Dr7Goqe5L1xvvC"
-const val STARTING_PAGE = 1
+const val STARTING_PAGE = 0
 
 interface NeoService {
-    @GET("neo/browse")
+    @GET("neo/browse?api_key=TZIMsTB3ztsDc6fdqEyTqGtNy7Dr7Goqe5L1xvvC")
     suspend fun neoBrowse(
-        @Query("page") page: Int,
-        @Query("api_key") key: String = API_KEY
+        @Query("page") page: Int
     ): BrowseResponse
 
-    @GET("feed")
-    suspend fun neoFeed(
+    @GET("feed?api_key=TZIMsTB3ztsDc6fdqEyTqGtNy7Dr7Goqe5L1xvvC")
+    fun neoFeed(
         @Query("start_date") startDate: String,
-        @Query("end_date") endDate: String,
-        @Query("api_key") key: String = API_KEY
-    ): FeedResponse
+        @Query("end_date") endDate: String
+    ): Call<FeedResponse>
 }
