@@ -25,6 +25,8 @@ buildscript {
     ext.fragment_version = "1.4.1"
     ext.swipe_refresh_version = "1.1.0"
     ext.okhttp_version = "5.0.0-alpha.7"
+    ext.mockito_version = "4.5.1"
+    ext.mockito_kotlin_version = "4.0.0"
 
     repositories {
         google()

@@ -12,7 +12,9 @@ interface NeoRepositoryInterface {
 
     fun getPagingDataFlow(): Flow<PagingData<Neo>>
 
-    suspend fun getFeedFlow(): Flow<FeedResult>
+    suspend fun getErrorFlow(): Flow<FeedResult>
+
+    suspend fun getFeedFlow(): Flow<List<FeedNeo>>
 
     suspend fun getNewFeedData(start: String, end: String)
 }

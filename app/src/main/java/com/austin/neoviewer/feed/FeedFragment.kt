@@ -2,6 +2,7 @@ package com.austin.neoviewer.feed
 
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.util.Log
@@ -14,6 +15,7 @@ import androidx.core.util.Pair
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.austin.neoviewer.R
 import com.austin.neoviewer.databinding.FragFeedBinding
 import com.austin.neoviewer.repository.FeedResult
@@ -21,10 +23,12 @@ import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.util.*
 
 private const val TAG = "FeedFragment"
-// TODO double clicking the date selector crashes
+
 @AndroidEntryPoint
 class FeedFragment: Fragment() {
 
@@ -37,6 +41,9 @@ class FeedFragment: Fragment() {
     ): View {
         val binding = FragFeedBinding.inflate(inflater, container, false)
 
+        val savedState = savedStateRegistry
+        // TODO implement shared preferences
+
         // building the date picker dialog
         val calendarConstraints = CalendarConstraints.Builder()
             .setValidator(DateValidatorPointBackward.now())
@@ -46,6 +53,7 @@ class FeedFragment: Fragment() {
             .setTitleText(getString(R.string.Select_date_range))
             .setSelection(
                 Pair(
+                    // setting the default selection to be 7 days ago to today
                     MaterialDatePicker.todayInUtcMilliseconds().minus(604800000),
                     MaterialDatePicker.todayInUtcMilliseconds()
                 )
@@ -57,8 +65,16 @@ class FeedFragment: Fragment() {
         // requesting data and updating the UI when the user confirms a new date range selection
         dateRangePicker.addOnPositiveButtonClickListener {
             // requesting data from the backend
-            val firstDate = Calendar.getInstance().apply { timeInMillis = it.first }
-            val secondDate = Calendar.getInstance().apply { timeInMillis = it.second }
+            // these calendars have 1 day added to them because the date picker returns the
+            // millisecond time for the day before the users selection
+            val firstDate = Calendar.getInstance().apply {
+                timeInMillis = it.first
+                set(Calendar.DAY_OF_MONTH, get(Calendar.DAY_OF_MONTH) + 1)
+            }
+            val secondDate = Calendar.getInstance().apply {
+                timeInMillis = it.second
+                set(Calendar.DAY_OF_MONTH, get(Calendar.DAY_OF_MONTH) + 1)
+            }
 
             // if the date range is larger than 1 week throw away the users input
             // this is because the api restricts requests to 1 week or less
@@ -66,16 +82,16 @@ class FeedFragment: Fragment() {
                 Toast.makeText(
                     requireContext(),
                     getString(R.string.date_range_too_long_toast),
-                    Toast.LENGTH_SHORT
+                    Toast.LENGTH_LONG
                 ).show()
                 return@addOnPositiveButtonClickListener
             }
 
+            // requesting the data
             viewModel.requestNewData(firstDate.formatDateForApi(), secondDate.formatDateForApi())
 
-            // updating the UI with the users selection
-            // 1 day in milliseconds is added to the times because DateUtils displays one day
-            // behind what the date picker shows
+            // updating the UI with the users selection. 1 day in milliseconds is added to the
+            // times because DateUtils displays one day behind what the date picker shows
             val timeString =
                 DateUtils.formatDateTime(requireContext(), it.first + 86400000, DateUtils.FORMAT_SHOW_DATE) +
                 " - " +
@@ -93,7 +109,7 @@ class FeedFragment: Fragment() {
         }
 
 
-        // creating the copy lambda the recycler view will use to copy the jpl url
+        // creating the copy lambda the recycler view will use to copy the jpl url to the system clipboard
         val clipboard = ContextCompat.getSystemService(
             requireContext(),
             ClipboardManager::class.java
@@ -112,20 +128,20 @@ class FeedFragment: Fragment() {
 
 
         // updating the UI based on the returned feed data
-        viewModel.feedLiveData.observe(viewLifecycleOwner) { feedResult ->
-            Log.i(TAG, "$feedResult")
-//            binding.loadingBar.visibility = View.GONE // turning off the loading spinner
-            adapter.dataset.clear() // clearing the ui for the new data
-            when (feedResult) {
-                is FeedResult.Success -> {
-                    adapter.dataset.addAll(feedResult.items)
-                }
+        lifecycleScope.launch {
+            viewModel.combinedFeedResultFlow.collectLatest { feedResult ->
+                adapter.dataset.clear() // clearing the ui for the new data
+                when (feedResult) {
+                    is FeedResult.Success -> {
+                        adapter.dataset.addAll(feedResult.items)
+                    }
 
-                is FeedResult.Error -> {
-                    Toast.makeText(requireContext(), feedResult.e.localizedMessage, Toast.LENGTH_SHORT).show()
+                    is FeedResult.Error -> {
+                        Toast.makeText(requireContext(), R.string.network_error_toast, Toast.LENGTH_SHORT).show()
+                    }
                 }
+                adapter.notifyDataSetChanged()
             }
-            adapter.notifyDataSetChanged()
         }
 
 

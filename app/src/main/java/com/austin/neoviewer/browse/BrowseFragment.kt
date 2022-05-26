@@ -73,7 +73,6 @@ class BrowseFragment: Fragment() {
         // collecting the pagingData and submitting it to the adapter
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.pagingDataFlow.collectLatest { pagingData ->
-                Log.i("bruh", "pagingData: $pagingData")
                 adapter.submitData(pagingData)
             }
         }

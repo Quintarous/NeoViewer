@@ -1,10 +1,8 @@
 package com.austin.neoviewer.network
 
-import com.austin.neoviewer.database.Neo
-import com.austin.neoviewer.network.BrowseResponse
-import com.austin.neoviewer.network.NeoService
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import retrofit2.Call
-import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 
@@ -71,7 +69,59 @@ class FakeNeoService() : NeoService {
 
     fun returnWithData() { browseResponse = populatedBrowseResponse }
 
-    override fun neoFeed(startDate: String, endDate: String): Call<FeedResponse> {
-        TODO("Not yet implemented")
+
+    private val feedNeoResponse1 = FeedNeoResponse(
+        1,
+        "neo1",
+        "jplUrl",
+        true,
+        DiameterData(
+            DiameterValues(1F, 1F),
+            DiameterValues(1F, 1F),
+            DiameterValues(1F, 1F),
+            DiameterValues(1F, 1F),
+        )
+    )
+    private val feedNeoResponse2 = FeedNeoResponse(
+        2,
+        "neo2",
+        "jplUrl",
+        false,
+        DiameterData(
+            DiameterValues(1F, 1F),
+            DiameterValues(1F, 1F),
+            DiameterValues(1F, 1F),
+            DiameterValues(1F, 1F),
+        )
+    )
+
+    private val feedResponse = FeedResponse(
+        days = mapOf(
+            Pair("2022-04-19", listOf(feedNeoResponse1)),
+            Pair("2022-04-20", listOf(feedNeoResponse2))
+        )
+    )
+
+    private val emptyFeedResponse = FeedResponse(mapOf())
+
+    private var neoFeedReturnValue: Call<FeedResponse>? = null
+
+    override fun neoFeed(startDate: String, endDate: String): Call<FeedResponse> =
+        neoFeedReturnValue ?: throw IOException()
+
+    fun neoFeedReturnData() {
+        neoFeedReturnValue = mock {
+            on { execute() } doReturn Response.success(feedResponse)
+        }
+    }
+
+    fun neoFeedReturnNoData() {
+        neoFeedReturnValue = mock {
+            on { execute() } doReturn Response.success(emptyFeedResponse)
+        }
+    }
+
+    fun neoFeedThrowException() {
+        neoFeedReturnValue = null
     }
 }

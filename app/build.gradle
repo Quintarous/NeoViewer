@@ -69,6 +69,8 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     testImplementation "junit:junit:$junit_version"
     kapt("androidx.room:room-compiler:$room_version")
+    // espresso idling resources
+    implementation "androidx.test.espresso:espresso-idling-resource:$espresso_version"
 
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$room_version")
@@ -98,6 +100,8 @@ dependencies {
     testImplementation("androidx.paging:paging-common:$paging_version")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
     testImplementation "androidx.arch.core:core-testing:$arch_testing_version"
+    testImplementation "org.mockito:mockito-core:$mockito_version"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
 
 
     // instrumented testing dependencies
@@ -124,6 +128,10 @@ dependencies {
     androidTestImplementation( "androidx.test.espresso:espresso-accessibility:$espresso_version")
     androidTestImplementation( "androidx.test.espresso:espresso-web:$espresso_version")
     androidTestImplementation( "androidx.test.espresso.idling:idling-concurrent:$espresso_version")
+    // mockito
+    androidTestImplementation "org.mockito:mockito-core:$mockito_version"
+    androidTestImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
+    androidTestImplementation "org.mockito:mockito-android:$mockito_version"
 
 
 }

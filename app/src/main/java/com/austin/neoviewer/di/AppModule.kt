@@ -24,7 +24,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    // TODO change the timeout to be longer cuz feed is timing out really fast
     @Singleton
     @Provides
     fun provideNeoService(): NeoService {

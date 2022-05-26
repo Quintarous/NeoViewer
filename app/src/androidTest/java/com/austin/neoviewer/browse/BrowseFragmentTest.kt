@@ -8,11 +8,14 @@ import androidx.navigation.Navigation
 import androidx.navigation.testing.TestNavHostController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.DrawerActions.open
 import androidx.test.espresso.contrib.DrawerMatchers.isClosed
+import androidx.test.espresso.idling.CountingIdlingResource
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.LargeTest
 import com.austin.neoviewer.launchFragmentInHiltContainer
@@ -54,18 +57,19 @@ class BrowseFragmentTest {
     // TODO test is flaky because the assertion is racing with the paging library to load the data
     @Test
     fun browseFragment_GivenData_DisplaysCorrectly() {
-        (fakeNeoService as FakeNeoService).returnWithData()
-        launchFragmentInHiltContainer<BrowseFragment>()
+        runTest(UnconfinedTestDispatcher()) {
+            (fakeNeoService as FakeNeoService).returnWithData()
+            launchFragmentInHiltContainer<BrowseFragment>()
 
-        onView(withId(R.id.browse_recycler)).check { view, noViewFoundException ->
-            if (noViewFoundException != null) {
-                throw noViewFoundException
+            onView(withId(R.id.browse_recycler)).check { view, noViewFoundException ->
+                if (noViewFoundException != null) {
+                    throw noViewFoundException
+                }
+
+                val recyclerView = view as RecyclerView
+
+                assert(recyclerView.adapter?.itemCount == 2)
             }
-
-            val recyclerView = view as RecyclerView
-            Log.i("bruh", "item count: ${recyclerView.adapter?.itemCount}")
-
-            assert(recyclerView.adapter?.itemCount == 2)
         }
     }
 
