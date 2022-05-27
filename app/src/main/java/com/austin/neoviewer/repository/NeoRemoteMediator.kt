@@ -58,7 +58,7 @@ class NeoRemoteMediator(
 
             neoDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) { // clear the db on a refresh
-                    neoDatabase.clearAllTables()
+                    neoDatabase.getNeoDao().clearNeo()
                 }
                 // insert the processed Neo objects and RemoteKeys into the database
                 neoDatabase.getNeoDao().insertAll(processNeoResponse(browseResponse.items))

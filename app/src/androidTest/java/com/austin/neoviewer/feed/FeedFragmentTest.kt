@@ -43,7 +43,7 @@ class FeedFragmentTest {
             (fakeNeoService as FakeNeoService).neoFeedReturnData()
             launchFragmentInHiltContainer<FeedFragment>()
 
-            onView(withText(R.string.Select_date_range)).perform(click())
+            onView(withId(R.id.select_date_range_label)).perform(click())
             onView(withText("SAVE")).perform(click())
 
             onView(withId(R.id.feed_recycler)).check { view, noViewFoundException ->
@@ -64,7 +64,7 @@ class FeedFragmentTest {
             (fakeNeoService as FakeNeoService).neoFeedReturnNoData()
             launchFragmentInHiltContainer<FeedFragment>()
 
-            onView(withText(R.string.Select_date_range)).perform(click())
+            onView(withId(R.id.select_date_range_label)).perform(click())
             onView(withText("SAVE")).perform(click())
 
             onView(withId(R.id.feed_recycler)).check { view, noViewFoundException ->
@@ -84,7 +84,7 @@ class FeedFragmentTest {
         runTest(UnconfinedTestDispatcher()) {
             launchFragmentInHiltContainer<FeedFragment>()
 
-            onView(withText(R.string.Select_date_range)).perform(click())
+            onView(withId(R.id.select_date_range_label)).perform(click())
             onView(withText("SAVE")).perform(click())
 
             onView(withId(R.id.feed_recycler)).check { view, noViewFoundException ->

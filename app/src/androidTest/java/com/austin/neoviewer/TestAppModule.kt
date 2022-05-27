@@ -2,7 +2,7 @@ package com.austin.neoviewer
 
 import android.content.Context
 import com.austin.neoviewer.database.NeoDatabase
-import com.austin.neoviewer.di.AppModule
+import com.austin.neoviewer.di.TestReplaceableModule
 import com.austin.neoviewer.network.FakeNeoService
 import com.austin.neoviewer.network.NeoService
 import dagger.Module
@@ -19,7 +19,7 @@ import javax.inject.Singleton
 @Module
 @TestInstallIn(
     components = [SingletonComponent::class],
-    replaces = [AppModule::class]
+    replaces = [TestReplaceableModule::class]
 )
 object TestAppModule {
 

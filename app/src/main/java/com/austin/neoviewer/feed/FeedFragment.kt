@@ -41,9 +41,6 @@ class FeedFragment: Fragment() {
     ): View {
         val binding = FragFeedBinding.inflate(inflater, container, false)
 
-        val savedState = savedStateRegistry
-        // TODO implement shared preferences
-
         // building the date picker dialog
         val calendarConstraints = CalendarConstraints.Builder()
             .setValidator(DateValidatorPointBackward.now())
@@ -64,21 +61,10 @@ class FeedFragment: Fragment() {
 
         // requesting data and updating the UI when the user confirms a new date range selection
         dateRangePicker.addOnPositiveButtonClickListener {
-            // requesting data from the backend
-            // these calendars have 1 day added to them because the date picker returns the
-            // millisecond time for the day before the users selection
-            val firstDate = Calendar.getInstance().apply {
-                timeInMillis = it.first
-                set(Calendar.DAY_OF_MONTH, get(Calendar.DAY_OF_MONTH) + 1)
-            }
-            val secondDate = Calendar.getInstance().apply {
-                timeInMillis = it.second
-                set(Calendar.DAY_OF_MONTH, get(Calendar.DAY_OF_MONTH) + 1)
-            }
 
             // if the date range is larger than 1 week throw away the users input
             // this is because the api restricts requests to 1 week or less
-            if ((secondDate.timeInMillis - firstDate.timeInMillis) > 604800000) {
+            if ((it.second - it.first) > 604800000) {
                 Toast.makeText(
                     requireContext(),
                     getString(R.string.date_range_too_long_toast),
@@ -87,17 +73,12 @@ class FeedFragment: Fragment() {
                 return@addOnPositiveButtonClickListener
             }
 
-            // requesting the data
-            viewModel.requestNewData(firstDate.formatDateForApi(), secondDate.formatDateForApi())
-
-            // updating the UI with the users selection. 1 day in milliseconds is added to the
-            // times because DateUtils displays one day behind what the date picker shows
-            val timeString =
-                DateUtils.formatDateTime(requireContext(), it.first + 86400000, DateUtils.FORMAT_SHOW_DATE) +
-                " - " +
-                DateUtils.formatDateTime(requireContext(), it.second + 86400000, DateUtils.FORMAT_SHOW_DATE)
-
-            binding.selectDateRangeLabel.text = timeString
+            // reporting the users selection to the ViewModel
+            val correctedStartMilliseconds = it.first + 86400000
+            val correctedEndMilliseconds = it.second + 86400000
+            viewModel.submitUiAction(
+                FeedViewModel.UiAction(kotlin.Pair(correctedStartMilliseconds, correctedEndMilliseconds))
+            )
         }
 
 
@@ -129,17 +110,42 @@ class FeedFragment: Fragment() {
 
         // updating the UI based on the returned feed data
         lifecycleScope.launch {
-            viewModel.combinedFeedResultFlow.collectLatest { feedResult ->
+            viewModel.combinedFeedResultFlow.collectLatest { state ->
                 adapter.dataset.clear() // clearing the ui for the new data
-                when (feedResult) {
-                    is FeedResult.Success -> {
-                        adapter.dataset.addAll(feedResult.items)
+
+                // formatting the times into a string to be displayed
+                if (state.datePair != null) {
+                    val timeString =
+                        DateUtils.formatDateTime(
+                            requireContext(),
+                            state.datePair.first,
+                            DateUtils.FORMAT_SHOW_DATE
+                        ) + " - " +
+                        DateUtils.formatDateTime(
+                            requireContext(),
+                            state.datePair.second,
+                            DateUtils.FORMAT_SHOW_DATE
+                        )
+
+                    binding.selectDateRangeLabel.text = timeString
+                } else { // if null keep the label as the select prompt
+                    binding.selectDateRangeLabel.text = getString(R.string.Select_date_range)
+                }
+
+                when(state.feedResult) {
+                    is FeedResult.Success -> { // on success update the UI
+                        adapter.dataset.addAll(state.feedResult.items)
                     }
 
-                    is FeedResult.Error -> {
-                        Toast.makeText(requireContext(), R.string.network_error_toast, Toast.LENGTH_SHORT).show()
+                    is FeedResult.Error -> { // on error show a toast
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.network_error_toast),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
+
                 adapter.notifyDataSetChanged()
             }
         }
@@ -151,17 +157,5 @@ class FeedFragment: Fragment() {
         }
 
         return binding.root
-    }
-
-
-    /**
-     * The NeoWs Nasa API requires the start and end date in a yyyy-mm-dd format. This function
-     * takes a Calendar object and generates an appropriate string from it.
-     */
-    private fun Calendar.formatDateForApi(): String {
-        val year = get(Calendar.YEAR)
-        val month = get(Calendar.MONTH)
-        val day = get(Calendar.DAY_OF_MONTH)
-        return "$year-$month-$day"
     }
 }

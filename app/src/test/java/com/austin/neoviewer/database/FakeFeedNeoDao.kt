@@ -1,5 +1,8 @@
 package com.austin.neoviewer.database
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+
 class FakeFeedNeoDao: FeedNeoDao {
 
     private val dataset = mutableListOf<FeedNeo>()
@@ -8,7 +11,8 @@ class FakeFeedNeoDao: FeedNeoDao {
         dataset.addAll(items)
     }
 
-    override fun getAll(): List<FeedNeo> = dataset
+    override fun getAll(): Flow<List<FeedNeo>> =
+        flow { emit(dataset) }
 
     override fun clear() {
         dataset.clear()

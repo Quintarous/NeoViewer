@@ -10,6 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NeoRepositoryTest {
@@ -17,9 +18,10 @@ class NeoRepositoryTest {
     // creating our fake and mock dependencies
     private val fakeService = FakeNeoService()
     private val mockNeoDao = mock<NeoDao>()
+    private val mockFeedNeoDao = mock<FeedNeoDao>()
     private val mockDb = mock<NeoDatabase> {
         on { this.getNeoDao() } doReturn mockNeoDao
-        on { this.getFeedNeoDao() } doReturn FakeFeedNeoDao()
+        on { this.getFeedNeoDao() } doReturn mockFeedNeoDao
     }
 
     @Before
@@ -39,14 +41,11 @@ class NeoRepositoryTest {
 
         val repository = NeoRepository(fakeService, mockDb)
 
-        // for the test itself we'll request data then assert the result emitted actually has data
+        // for the test itself we'll request data then assert it was inserted into the db
         runTest(UnconfinedTestDispatcher()) {
-            val feedFlow = repository.getErrorFlow()
-
             repository.getNewFeedData("", "")
 
-            val firstValue = feedFlow.first()
-            assert(firstValue == FeedResult.Success(expectedData))
+            verify(mockFeedNeoDao).insertAll(expectedData)
         }
     }
 
@@ -56,14 +55,11 @@ class NeoRepositoryTest {
 
         val repository = NeoRepository(fakeService, mockDb)
 
-        // requesting data and asserting an empty success result is emitted
+        // requesting data and asserting the returned empty data is inserted into the db
         runTest(UnconfinedTestDispatcher()) {
-            val feedFlow = repository.getErrorFlow()
-
             repository.getNewFeedData("", "")
 
-            val firstValue = feedFlow.first()
-            assert(firstValue == FeedResult.Success(listOf<FeedNeo>()))
+            verify(mockFeedNeoDao).insertAll(listOf())
         }
     }
 

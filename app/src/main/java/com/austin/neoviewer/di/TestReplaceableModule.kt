@@ -1,9 +1,11 @@
 package com.austin.neoviewer.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.austin.neoviewer.repository.NeoRepository
 import com.austin.neoviewer.database.NeoDatabase
+import com.austin.neoviewer.feed.FeedViewModel.Companion.PREFERENCES_KEY
 import com.austin.neoviewer.network.BASE_URL
 import com.austin.neoviewer.network.NeoService
 import com.austin.neoviewer.repository.NeoRepositoryInterface
@@ -22,7 +24,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+object TestReplaceableModule {
 
     @Singleton
     @Provides

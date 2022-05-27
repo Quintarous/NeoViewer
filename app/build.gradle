@@ -71,6 +71,9 @@ dependencies {
     kapt("androidx.room:room-compiler:$room_version")
     // espresso idling resources
     implementation "androidx.test.espresso:espresso-idling-resource:$espresso_version"
+    // saved state
+    implementation("androidx.savedstate:savedstate-ktx:$saved_state_version")
+
 
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$room_version")
