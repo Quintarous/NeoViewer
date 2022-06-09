@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.*
 import com.austin.neoviewer.repository.FeedResult
+import com.austin.neoviewer.repository.FeedResultItem
 import com.austin.neoviewer.repository.NeoRepositoryInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -71,9 +72,29 @@ class FeedViewModel @Inject constructor (
                         .apply()
                 }
 
+                val listWithSeparators = mutableListOf<FeedResultItem>()
+                if (it.isNotEmpty()) {
+                    // adding a the first item and it's separator
+                    listWithSeparators.add(FeedResultItem.Separator(it[0].date))
+                    listWithSeparators.add(FeedResultItem.Neo(it[0]))
+
+                    for (index in (1..it.size.minus(1))) {
+                        val feedNeo = it[index]
+                        val previousFeedNeo = it[index - 1]
+
+                        // if the date we're looking at is different from the previous one
+                        if (feedNeo.date != previousFeedNeo.date) {
+                            // add a separator for the new date
+                            listWithSeparators.add(FeedResultItem.Separator(feedNeo.date))
+                        }
+
+                        listWithSeparators.add(FeedResultItem.Neo(feedNeo))
+                    }
+                }
+
                 _combinedFeedResultFlow.emit(UiState(
                     datePair = currentDateRange,
-                    feedResult = FeedResult.Success(it)
+                    feedResult = FeedResult.Success(listWithSeparators)
                 ))
             }
         }
@@ -114,8 +135,6 @@ class FeedViewModel @Inject constructor (
         }
 
         // making the API request with the correct date format
-        Log.i("bruh", "firstTime: ${firstTime.formatDateForApi()}")
-        Log.i("bruh", "secondTime: ${secondTime.formatDateForApi()}")
         requestNewData(firstTime.formatDateForApi(), secondTime.formatDateForApi())
     }
 

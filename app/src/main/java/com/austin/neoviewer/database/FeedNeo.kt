@@ -17,5 +17,5 @@ data class FeedNeo(
     val milesDiamMax: Float,
     val feetDiamMin: Float,
     val feetDiamMax: Float,
-    val date: String? = null
+    val date: String
 )

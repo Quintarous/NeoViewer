@@ -13,7 +13,7 @@ interface FeedNeoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<FeedNeo>)
 
-    @Query("SELECT * FROM FeedNeo")
+    @Query("SELECT * FROM FeedNeo ORDER BY date ASC")
     fun getAll(): Flow<List<FeedNeo>>
 
     @Query("DELETE FROM FeedNeo")
