@@ -2,7 +2,6 @@ package com.austin.neoviewer.feed
 
 import android.content.SharedPreferences
 import android.util.Log
-import androidx.core.os.bundleOf
 import androidx.lifecycle.*
 import com.austin.neoviewer.repository.FeedResult
 import com.austin.neoviewer.repository.NeoRepositoryInterface
@@ -14,8 +13,6 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
-private const val TAG = "FeedViewModel"
-
 @HiltViewModel
 class FeedViewModel @Inject constructor (
     private val repository: NeoRepositoryInterface,
@@ -23,11 +20,23 @@ class FeedViewModel @Inject constructor (
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ): ViewModel() {
 
-    // caching the current date query so it can be provided to the UI
+    /**
+     * When the user selects a date range it is cached in the [standbyDateRange] variable. If the
+     * network request ends up being successful than the date range will be cached in
+     * [SharedPreferences] and [currentDateRange] will also be updated.
+     *
+     * This is to keep the displayed date range in the UI in sync with the actual data from the db.
+     */
+    private var standbyDateRange: Pair<Long, Long>? = null
     private var currentDateRange: Pair<Long, Long>? = null
 
+    // collecting load status flow and exposing it to the UI
+    val isRequestInProgress = liveData(dispatcher) {
+        emitSource(repository.requestInProgress.asLiveData())
+    }
+
     // this is the flow that is exposed to the UI
-    private val _combinedFeedResultFlow = MutableStateFlow(
+    private val _combinedFeedResultFlow = MutableStateFlow<UiState>(
         UiState(null, FeedResult.Success(listOf()))
     )
     val combinedFeedResultFlow: StateFlow<UiState>
@@ -46,18 +55,30 @@ class FeedViewModel @Inject constructor (
         // for the UI
         viewModelScope.launch(dispatcher) {
             repository.getFeedFlow().collectLatest {
+                // reporting to the repository that the request finished and was received
                 if (repository.requestInProgress.value) {
                     repository.requestInProgress.emit(false)
                 }
 
-                // TODO insert a header to the dataset list
+                // moving the up to date standby date range value into the current variable
+                if (standbyDateRange != null) currentDateRange = standbyDateRange
+
+                // assuming it's not null cache the currentDateRange in SharedPreferences
+                if (currentDateRange != null) {
+                    sharedPreferences.edit()
+                        .putLong(START_KEY, currentDateRange!!.first)
+                        .putLong(END_KEY, currentDateRange!!.second)
+                        .apply()
+                }
 
                 _combinedFeedResultFlow.emit(UiState(
                     datePair = currentDateRange,
                     feedResult = FeedResult.Success(it)
                 ))
             }
+        }
 
+        viewModelScope.launch(dispatcher) {
             repository.getErrorFlow().collectLatest {
                 if (repository.requestInProgress.value) {
                     repository.requestInProgress.emit(false)
@@ -71,11 +92,6 @@ class FeedViewModel @Inject constructor (
         }
     }
 
-    // collecting load status flow and exposing it to the UI
-    val isRequestInProgress = liveData(dispatcher) {
-        emitSource(repository.requestInProgress.asLiveData())
-    }
-
 
     /**
      * submitUiAction is exposed to the UI so it can submit [UiAction] objects to the view model.
@@ -85,22 +101,21 @@ class FeedViewModel @Inject constructor (
         val first = action.timeRange.first
         val second = action.timeRange.second
 
-        // caching them in the SharedPreferences
-        currentDateRange = Pair(first, second)
-        sharedPreferences.edit()
-            .putLong(START_KEY, first)
-            .putLong(END_KEY, second)
-            .apply()
+
+        // caching the date range in the standby variable to be more permanently cached if the request succeeds
+        standbyDateRange = Pair(first, second)
 
         // converting the times to calendar objects
         val firstTime = Calendar.getInstance().apply {
             timeInMillis = action.timeRange.first
         }
         val secondTime = Calendar.getInstance().apply {
-            timeInMillis = action.timeRange.first
+            timeInMillis = action.timeRange.second
         }
 
         // making the API request with the correct date format
+        Log.i("bruh", "firstTime: ${firstTime.formatDateForApi()}")
+        Log.i("bruh", "secondTime: ${secondTime.formatDateForApi()}")
         requestNewData(firstTime.formatDateForApi(), secondTime.formatDateForApi())
     }
 
@@ -147,7 +162,7 @@ class FeedViewModel @Inject constructor (
      */
     private fun Calendar.formatDateForApi(): String {
         val year = get(Calendar.YEAR)
-        val month = get(Calendar.MONTH)
+        val month = get(Calendar.MONTH).plus(1)
         val day = get(Calendar.DAY_OF_MONTH)
         return "$year-$month-$day"
     }

@@ -27,8 +27,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
 
-private const val TAG = "FeedFragment"
-
 @AndroidEntryPoint
 class FeedFragment: Fragment() {
 
@@ -111,7 +109,6 @@ class FeedFragment: Fragment() {
         // updating the UI based on the returned feed data
         lifecycleScope.launch {
             viewModel.combinedFeedResultFlow.collectLatest { state ->
-                adapter.dataset.clear() // clearing the ui for the new data
 
                 // formatting the times into a string to be displayed
                 if (state.datePair != null) {
@@ -134,6 +131,7 @@ class FeedFragment: Fragment() {
 
                 when(state.feedResult) {
                     is FeedResult.Success -> { // on success update the UI
+                        adapter.dataset.clear() // clearing the ui for the new data
                         adapter.dataset.addAll(state.feedResult.items)
                     }
 

@@ -24,7 +24,7 @@ class NeoRepository (
     private val neoDatabase: NeoDatabase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : NeoRepositoryInterface {
-
+//TODO add separators to the feed data list
     // getting both DAO's from the database
     private val neoDao = neoDatabase.getNeoDao()
     private val feedNeoDao = neoDatabase.getFeedNeoDao()
@@ -36,7 +36,7 @@ class NeoRepository (
     private var call: Call<FeedResponse>? = null
 
 
-    override suspend fun getErrorFlow(): Flow<FeedResult> = errorFlow
+    override suspend fun getErrorFlow(): SharedFlow<FeedResult.Error> = errorFlow
     override suspend fun getFeedFlow(): Flow<List<FeedNeo>> = feedNeoDao.getAll()
 
 

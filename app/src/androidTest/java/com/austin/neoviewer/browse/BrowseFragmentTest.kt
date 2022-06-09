@@ -54,7 +54,6 @@ class BrowseFragmentTest {
     @Inject
     lateinit var fakeNeoService: NeoService
 
-    // TODO test is flaky because the assertion is racing with the paging library to load the data
     @Test
     fun browseFragment_GivenData_DisplaysCorrectly() {
         runTest(UnconfinedTestDispatcher()) {
