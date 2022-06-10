@@ -24,7 +24,7 @@ class NeoRepository (
     private val neoDatabase: NeoDatabase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : NeoRepositoryInterface {
-//TODO add separators to the feed data list
+
     // getting both DAO's from the database
     private val neoDao = neoDatabase.getNeoDao()
     private val feedNeoDao = neoDatabase.getFeedNeoDao()

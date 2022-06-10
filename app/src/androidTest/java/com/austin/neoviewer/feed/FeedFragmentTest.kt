@@ -53,7 +53,7 @@ class FeedFragmentTest {
 
                 val recyclerView = view as RecyclerView
 
-                assert(recyclerView.adapter?.itemCount == 2)
+                assert(recyclerView.adapter?.itemCount == 4)
             }
         }
     }
