@@ -1,13 +1,10 @@
 package com.austin.neoviewer.repository
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.idling.CountingIdlingResource
 import com.austin.neoviewer.database.Neo
 import com.austin.neoviewer.database.NeoDatabase
 import com.austin.neoviewer.database.RemoteKeys

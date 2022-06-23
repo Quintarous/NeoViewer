@@ -32,7 +32,7 @@ class FakeNeoRepository: NeoRepositoryInterface {
         get() = MutableStateFlow(false)
 
     override fun getPagingDataFlow(): Flow<PagingData<Neo>> {
-        TODO()
+        TODO("currently this is not used in any tests")
     }
 
     override suspend fun getErrorFlow(): Flow<FeedResult> =
@@ -50,6 +50,6 @@ class FakeNeoRepository: NeoRepositoryInterface {
         }
 
     override suspend fun getNewFeedData(start: String, end: String) {
-        TODO("Not yet implemented")
+
     }
 }

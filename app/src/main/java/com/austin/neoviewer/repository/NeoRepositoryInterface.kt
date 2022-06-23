@@ -1,6 +1,5 @@
 package com.austin.neoviewer.repository
 
-import androidx.lifecycle.LiveData
 import androidx.paging.PagingData
 import com.austin.neoviewer.database.FeedNeo
 import com.austin.neoviewer.database.Neo

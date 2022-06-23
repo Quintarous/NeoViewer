@@ -17,8 +17,6 @@ import kotlinx.coroutines.withContext
 import retrofit2.*
 import java.io.IOException
 
-private const val TAG = "NeoRepository"
-
 class NeoRepository (
     private val service: NeoService,
     private val neoDatabase: NeoDatabase,

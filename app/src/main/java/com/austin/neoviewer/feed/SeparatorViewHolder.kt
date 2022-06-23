@@ -1,6 +1,5 @@
 package com.austin.neoviewer.feed
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.austin.neoviewer.databinding.ItemSeparatorBinding
 

@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.austin.neoviewer.R
-import com.austin.neoviewer.database.FeedNeo
 import com.austin.neoviewer.databinding.ItemFeedNeoBinding
 import com.austin.neoviewer.databinding.ItemSeparatorBinding
 import com.austin.neoviewer.repository.FeedResultItem

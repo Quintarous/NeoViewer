@@ -6,7 +6,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/neo_content_description">
 
         <TextView
             android:id="@+id/neo_name"
@@ -36,10 +37,11 @@
 
         <ImageButton
             android:id="@+id/jpl_copy_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginEnd="24dp"
             android:background="#00FFFFFF"
+            android:contentDescription="@string/copy_jpl_url"
             app:layout_constraintBottom_toBottomOf="@+id/neo_jpl_url"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/neo_jpl_url"

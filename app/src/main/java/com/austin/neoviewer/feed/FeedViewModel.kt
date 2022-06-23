@@ -1,7 +1,6 @@
 package com.austin.neoviewer.feed
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.*
 import com.austin.neoviewer.repository.FeedResult
 import com.austin.neoviewer.repository.FeedResultItem

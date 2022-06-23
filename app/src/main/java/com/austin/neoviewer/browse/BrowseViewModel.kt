@@ -1,6 +1,5 @@
 package com.austin.neoviewer.browse
 
-import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
 import com.austin.neoviewer.repository.NeoRepositoryInterface
@@ -8,8 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
-
-private const val TAG = "BrowseViewModel"
 
 @HiltViewModel
 class BrowseViewModel @Inject constructor (

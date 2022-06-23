@@ -23,4 +23,6 @@
     <string name="date_range_too_long_toast">Date range can\'t be more than one week!</string>
     <string name="no_feed_data">Sorry! No data found for these days.</string>
     <string name="date">DATE : </string>
+    <string name="neo_content_description">near earth object click to expand</string>
+    <string name="copy_jpl_url">copy jpl url</string>
 </resources>

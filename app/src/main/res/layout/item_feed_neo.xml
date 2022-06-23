@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:background="#00FFFFFF"
+            android:contentDescription="@string/copy_jpl_url"
             app:layout_constraintBottom_toBottomOf="@+id/neo_jpl_url"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/neo_jpl_url"

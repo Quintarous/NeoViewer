@@ -1,21 +1,10 @@
 package com.austin.neoviewer.browse
 
-import android.util.Log
-import android.view.Gravity
-import android.view.View
-import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
-import androidx.navigation.testing.TestNavHostController
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.accessibility.AccessibilityChecks
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.DrawerActions.open
-import androidx.test.espresso.contrib.DrawerMatchers.isClosed
-import androidx.test.espresso.idling.CountingIdlingResource
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.LargeTest
 import com.austin.neoviewer.launchFragmentInHiltContainer
@@ -57,6 +46,9 @@ class BrowseFragmentTest {
     @Test
     fun browseFragment_GivenData_DisplaysCorrectly() {
         runTest(UnconfinedTestDispatcher()) {
+            AccessibilityChecks.enable()
+                .setRunChecksFromRootView(true)
+
             (fakeNeoService as FakeNeoService).returnWithData()
             launchFragmentInHiltContainer<BrowseFragment>()
 
@@ -75,9 +67,12 @@ class BrowseFragmentTest {
     @Test
     fun browseFragment_givenError_ShowsRetryButton() {
         runTest {
+            AccessibilityChecks.enable()
+                .setRunChecksFromRootView(true)
+
             launchFragmentInHiltContainer<BrowseFragment>()
 
-            onView(withId(R.id.browse_frag_retry_button)).check(matches(isDisplayed()))
+            onView(ViewMatchers.withId(R.id.browse_frag_retry_button)).check(matches(isDisplayed()))
         }
     }
 }

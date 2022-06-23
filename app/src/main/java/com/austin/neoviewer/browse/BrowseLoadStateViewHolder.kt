@@ -1,6 +1,5 @@
 package com.austin.neoviewer.browse
 
-import android.view.View
 import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView

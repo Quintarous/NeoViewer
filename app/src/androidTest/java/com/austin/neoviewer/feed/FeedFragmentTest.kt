@@ -2,6 +2,7 @@ package com.austin.neoviewer.feed
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.accessibility.AccessibilityChecks
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -40,6 +41,8 @@ class FeedFragmentTest {
     @Test
     fun feedFragment_withData_DisplaysCorrectly() {
         runTest(UnconfinedTestDispatcher()) {
+            AccessibilityChecks.enable()
+
             (fakeNeoService as FakeNeoService).neoFeedReturnData()
             launchFragmentInHiltContainer<FeedFragment>()
 
@@ -61,6 +64,8 @@ class FeedFragmentTest {
     @Test
     fun feedFragment_withEmptyData_DisplaysNoDataTextView() {
         runTest(UnconfinedTestDispatcher()) {
+            AccessibilityChecks.enable()
+
             (fakeNeoService as FakeNeoService).neoFeedReturnNoData()
             launchFragmentInHiltContainer<FeedFragment>()
 
@@ -82,6 +87,8 @@ class FeedFragmentTest {
     @Test
     fun feedFragment_withException_DisplaysCorrectly() {
         runTest(UnconfinedTestDispatcher()) {
+            AccessibilityChecks.enable()
+
             launchFragmentInHiltContainer<FeedFragment>()
 
             onView(withId(R.id.select_date_range_label)).perform(click())
