@@ -23,18 +23,20 @@ lateinit var retryLambda: () -> Unit
 @AndroidEntryPoint
 class BrowseFragment: Fragment() {
 
-    private val viewModel: BrowseViewModel by viewModels()
+    private val viewModel: BrowseViewModel by viewModels() // grabbing our ViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // inflating our data binding layout
         val binding = FragBrowseBinding.inflate(inflater, container, false).apply {
             viewModel = viewModel
         }
         setHasOptionsMenu(true)
 
+        // we'll need the ClipboardManager to pass to the adapter
         val clipboard = getSystemService(requireContext(), ClipboardManager::class.java) as ClipboardManager
 
 

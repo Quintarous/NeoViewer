@@ -6,9 +6,10 @@ import androidx.test.filters.MediumTest
 import com.austin.neoviewer.database.Neo
 import com.austin.neoviewer.database.NeoDatabase
 import com.austin.neoviewer.network.FakeNeoService
-import junit.framework.Assert.assertFalse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.CoreMatchers.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Test
 
@@ -44,8 +45,11 @@ class NeoRemoteMediatorTest {
             )
 
             // assert the load is successful and data was present (ie: endOfPaginationReached is false)
-            assert(result is RemoteMediator.MediatorResult.Success)
-            assertFalse((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached)
+            assertThat(result, `is`(instanceOf(RemoteMediator.MediatorResult.Success::class.java)))
+            assertThat(
+                (result as RemoteMediator.MediatorResult.Success).endOfPaginationReached,
+                equalTo(false)
+            )
         }
     }
 
@@ -67,8 +71,11 @@ class NeoRemoteMediatorTest {
             )
 
             // asserting the load was successful and there was no data (ie: endOfPaginationReached is true)
-            assert(result is RemoteMediator.MediatorResult.Success)
-            assert((result as RemoteMediator.MediatorResult.Success).endOfPaginationReached)
+            assertThat(result, instanceOf(RemoteMediator.MediatorResult.Success::class.java))
+            assertThat(
+                (result as RemoteMediator.MediatorResult.Success).endOfPaginationReached,
+                equalTo(true)
+            )
         }
     }
 
@@ -90,7 +97,7 @@ class NeoRemoteMediatorTest {
             )
 
             // asserting the exception was handled and an error was returned
-            assert(result is RemoteMediator.MediatorResult.Error)
+            assertThat(result, instanceOf(RemoteMediator.MediatorResult.Error::class.java))
         }
     }
 }

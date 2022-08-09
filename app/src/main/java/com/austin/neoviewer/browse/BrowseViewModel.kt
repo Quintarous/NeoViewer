@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BrowseViewModel @Inject constructor (
-    private val repository: NeoRepositoryInterface,
+    repository: NeoRepositoryInterface,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
 

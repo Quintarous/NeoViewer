@@ -4,18 +4,21 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.accessibility.AccessibilityChecks
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.LargeTest
 import com.austin.neoviewer.R
 import com.austin.neoviewer.launchFragmentInHiltContainer
 import com.austin.neoviewer.network.FakeNeoService
 import com.austin.neoviewer.network.NeoService
+import com.google.android.apps.common.testing.accessibility.framework.AccessibilityCheckResultUtils.matchesCheckNames
+import com.google.android.apps.common.testing.accessibility.framework.AccessibilityCheckResultUtils.matchesViews
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.allOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -41,7 +44,15 @@ class FeedFragmentTest {
     @Test
     fun feedFragment_withData_DisplaysCorrectly() {
         runTest(UnconfinedTestDispatcher()) {
-            AccessibilityChecks.enable()
+            AccessibilityChecks.enable().apply {
+                setRunChecksFromRootView(true)
+                setSuppressingResultMatcher(
+                    allOf(
+                        matchesCheckNames(`is`("TouchTargetSizeCheck")),
+                        matchesViews(withResourceName("mtrl_calendar_days_of_week"))
+                    )
+                )
+            }
 
             (fakeNeoService as FakeNeoService).neoFeedReturnData()
             launchFragmentInHiltContainer<FeedFragment>()
@@ -64,7 +75,15 @@ class FeedFragmentTest {
     @Test
     fun feedFragment_withEmptyData_DisplaysNoDataTextView() {
         runTest(UnconfinedTestDispatcher()) {
-            AccessibilityChecks.enable()
+            AccessibilityChecks.enable().apply {
+                setRunChecksFromRootView(true)
+                setSuppressingResultMatcher(
+                    allOf(
+                        matchesCheckNames(`is`("TouchTargetSizeCheck")),
+                        matchesViews(withResourceName("mtrl_calendar_days_of_week"))
+                    )
+                )
+            }
 
             (fakeNeoService as FakeNeoService).neoFeedReturnNoData()
             launchFragmentInHiltContainer<FeedFragment>()
@@ -87,7 +106,15 @@ class FeedFragmentTest {
     @Test
     fun feedFragment_withException_DisplaysCorrectly() {
         runTest(UnconfinedTestDispatcher()) {
-            AccessibilityChecks.enable()
+            AccessibilityChecks.enable().apply {
+                setRunChecksFromRootView(true)
+                setSuppressingResultMatcher(
+                    allOf(
+                        matchesCheckNames(`is`("TouchTargetSizeCheck")),
+                        matchesViews(withResourceName("mtrl_calendar_days_of_week"))
+                    )
+                )
+            }
 
             launchFragmentInHiltContainer<FeedFragment>()
 

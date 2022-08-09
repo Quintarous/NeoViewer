@@ -15,7 +15,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner = "com.austin.neoviewer.CustomTestRunner"
     }
 
@@ -40,6 +40,12 @@ android {
     packagingOptions {
         resources {
             excludes += ['/META-INF/AL2.0', '/META-INF/LGPL2.1']
+        }
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
         }
     }
 
@@ -98,13 +104,21 @@ dependencies {
 
     // unit testing dependencies
     testImplementation "junit:junit:$junit_version"
+    testImplementation "androidx.test:core:$androidx_test_version"
     testImplementation "androidx.test:core-ktx:$androidx_test_version"
+    testImplementation 'androidx.test.ext:junit:1.1.3'
+    testImplementation 'androidx.test.ext:junit-ktx:1.1.3'
+
     // paging
     testImplementation("androidx.paging:paging-common:$paging_version")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
     testImplementation "androidx.arch.core:core-testing:$arch_testing_version"
     testImplementation "org.mockito:mockito-core:$mockito_version"
     testImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
+    // hamcrest
+    testImplementation "org.hamcrest:hamcrest:$hamcrest_version"
+    // robolectric
+    testImplementation "org.robolectric:robolectric:$robolectric_version"
 
 
     // instrumented testing dependencies
@@ -135,6 +149,8 @@ dependencies {
     androidTestImplementation "org.mockito:mockito-core:$mockito_version"
     androidTestImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
     androidTestImplementation "org.mockito:mockito-android:$mockito_version"
+    // hamcrest
+    androidTestImplementation "org.hamcrest:hamcrest:$hamcrest_version"
 
 
 }

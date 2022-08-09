@@ -120,8 +120,7 @@ class FeedViewModel @Inject constructor (
         // grabbing the first and second time values from the UiAction
         val first = action.timeRange.first
         val second = action.timeRange.second
-
-
+        
         // caching the date range in the standby variable to be more permanently cached if the request succeeds
         standbyDateRange = Pair(first, second)
 
